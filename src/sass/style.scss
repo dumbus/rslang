@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.container {
+  width: 1440px;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none;
+}
+
+@import "./modules/header.scss";
