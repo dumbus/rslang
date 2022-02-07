@@ -1,3 +1,5 @@
+@import "./variables.scss";
+
 * {
   margin: 0;
   padding: 0;
@@ -9,8 +11,40 @@
   margin: 0 auto;
 }
 
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  padding: 5px 10px;
+  background-color: $blue;
+  border-radius: 5px;
+  &:hover {
+    filter: grayscale(50%);
+    cursor: pointer;
+  }
+}
+
+.title {
+  padding: 5px 10px;
+  background-color: $green;
+  border-radius: 5px;
+  font-size: 28px;
+  text-align: center;
+}
+
+.subtitle {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 5px 10px;
+  background-color: $light-green;
+  border-radius: 5px;
+  font-size: 24px;
+}
+
 .hidden {
   display: none;
 }
 
 @import "./modules/header.scss";
+@import "./modules/mainscreen.scss";
