@@ -1,0 +1,23 @@
+.mainscreen {
+  &-text {
+    &-subtitle {
+      margin: 20px 0 0 0;
+    }
+    &-reasons {
+      margin-top: 10px;
+      font-size: 20px;
+      list-style-type: none;
+      &-item {
+        margin-top: 5px;
+      }
+    }
+    &-advantages {
+      margin-top: 10px;
+      font-size: 20px;
+      list-style-type: none;
+      &-item {
+        margin-top: 5px;
+      }
+    }
+  }
+}
