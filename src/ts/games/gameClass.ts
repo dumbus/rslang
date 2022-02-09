@@ -1,8 +1,14 @@
-import IWord from '../interfaces';
+import { IDescriptGame, IWord } from '../interfaces';
 
-class Sprint {
-  words: IWord[];
-  constructor(words: IWord[]) {
-    this.words = words;
+export default class Game {
+  type: 'sprint' | 'audiocall';
+  description: IDescriptGame;
+  constructor(type: 'sprint' | 'audiocall') {
+    this.type = type;
+    this.description = type === 'sprint' ? SPRINT_DESCRIPTION : AUDIOCALL_DESCRIPTION;
   }
+
+  private renderSprint(words: IWord[]) {}
+
+  startPage() {}
 }

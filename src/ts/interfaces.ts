@@ -1,4 +1,4 @@
-export default interface IWord {
+export interface IWord {
   id: string;
   group: number;
   page: number;
@@ -13,4 +13,9 @@ export default interface IWord {
   wordTranslate: string;
   textMeaningTranslate: string;
   textExampleTranslate: string;
+}
+
+export interface IDescriptGame {
+  title: string;
+  description: string;
 }
