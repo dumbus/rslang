@@ -1,31 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <title>Rs-lang</title>
 </head>
+
 <body>
-  <main class="root">
-    <section class="description">
-      <button class="close-game">
-        <span class="close-game__span-1"></span>
-        <span class="close-game__span-2"></span>
-      </button>
-      <div class="description__main">
-        <h2 class="description__title">sprint</h2>
-        <p class="description__text">«Спринт» - это веселый способ выучить новые слова. Вам нужно выбрать соответствует ли перевод предложенному слову.</p>
-        <ul class="btn-level">
-          <li class="btn-level_1">1</li>
-          <li class="btn-level_2">2</li>
-          <li class="btn-level_3">3</li>
-          <li class="btn-level_4">4</li>
-          <li class="btn-level_5">5</li>
-          <li class="btn-level_6">6</li>
-        </ul>
-      </div>
-    </section>
-  </main>
+  <div class="container">
+    <div class="root">
+      <header class="header">
+        <div class="header-home">RS Lang</div>
+        <nav class="header-nav">
+          <div class="header-nav-textbook button">Учебник</div>
+          <div class="header-nav-stats button">Статистика</div>
+          <div class="header-nav-audio button">Аудиовызов</div>
+          <div class="header-nav-sprint button">Спринт</div>
+        </nav>
+      </header>
+      <section class="game">
+        <div class="game__main">
+          <p class="game__total">Текущий результат 0</p>
+          <p class="game__add-points">+10 очков за слово</p>
+          <ul class="game__dot">
+            <li class="game__dot-item"></li>
+            <li class="game__dot-item"></li>
+            <li class="game__dot-item"></li>
+          </ul>
+          <div class="game__question">
+            <p class="game__question-word">help</p>
+            <p class="game__question-translate">помощь</p>
+            <div class="game__question-btn">
+              <button class="game__question-btn_item game__question-btn_wrong">Неверно</button>
+              <button class="game__question-btn_item game__question-btn_correct">Верно</button>
+            </div>
+          </div>
+          <div class="game__timer">
+            <img class="game__timer-img" src="./assets/svg/clock.svg" alt="clock">
+            <p class="game__timer-num">59</p>
+          </div>
+        </div>
+      </section>
+<!-- 
+      <main class="main">
+        <div class="mainscreen">
+          <h1 class="mainscreen-title title">Начните изучать английский язык уже сегодня!</h1>
+          <div class="mainscreen-text">
+            <h2 class="mainscreen-text-subtitle subtitle">Зачем учить английский язык?</h2>
+            <ul class="mainscreen-text-reasons">
+              <li class="mainscreen-text-reasons-item">
+                Английский язык – один из наиболее распространённых в мире
+              </li>
+              <li class="mainscreen-text-reasons-item">
+                Английский открывает перед тобой новые возможности
+              </li>
+              <li class="mainscreen-text-reasons-item">
+                Английский делает тебя привлекательнее для работодателей
+              </li>
+              <li class="mainscreen-text-reasons-item">
+                Английский язык открывает тебе путь в лучшие университеты мира
+              </li>
+              <li class="mainscreen-text-reasons-item">
+                Английский улучшает память и помогает держать мозг в тонусе
+              </li>
+            </ul>
+
+            <h2 class="mainscreen-text-subtitle subtitle"> Преимущества нашего приложения:</h2>
+            <ul class="mainscreen-text-advantages">
+              <li class="mainscreen-text-advantages-item">
+                В нашем приложении есть готовые наборы слов с различной сложностью, чтобы Вы могли подобрать подходящий
+                Вам уровень и прогрессировать.
+              </li>
+              <li class="mainscreen-text-advantages-item">
+                Вы можете изучать слова при помощи учебника или мини-игр.
+              </li>
+              <li class="mainscreen-text-advantages-item">
+                После игры слова оказываются в Вашем личном словаре.
+              </li>
+              <li class="mainscreen-text-advantages-item">
+                Вы можете следить за своей статистикой и грамотно выстраивать процесс обучения.
+              </li>
+              <li class="mainscreen-text-advantages-item">
+                Учитесь так, как комфортно Вам!
+              </li>
+            </ul>
+          </div>
+        </div>
+      </main> -->
+    </div>
+  </div>
+
 </body>
+
 </html>

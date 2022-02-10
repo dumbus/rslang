@@ -17,5 +17,5 @@ export interface IWord {
 
 export interface IDescriptGame {
   title: string;
-  description: string;
+  text: string;
 }
