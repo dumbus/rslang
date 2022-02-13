@@ -1,6 +1,6 @@
 import { IWord } from './interfaces';
 
-const BASE = 'https://rs-lang-bckend.herokuapp.com/';
+export const BASE = 'https://rs-lang-bckend.herokuapp.com/';
 const WORDS = `${BASE}words`;
 
 export async function getWords(group = '0', page = '0') {

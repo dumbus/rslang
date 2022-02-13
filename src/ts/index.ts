@@ -3,12 +3,12 @@ import Game from './games/gameClass';
 
 const sprintBtn = document.querySelector('.header-nav-sprint');
 sprintBtn.addEventListener('click', () => {
-  const game = new Game('sprint');
-  game.startPage();
+  Game.inst = new Game('sprint');
+  Game.inst.startPage();
 });
 
 const audiocallBtn = document.querySelector('.header-nav-audio');
 audiocallBtn.addEventListener('click', () => {
-  const game = new Game('audiocall');
-  game.startPage();
+  Game.inst = new Game('audiocall');
+  Game.inst.startPage();
 });
