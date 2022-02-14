@@ -89,15 +89,16 @@ export default class Game {
     return items;
   }
 
-  private finishSprint() {
+  private finishGame() {
     this.audioFinish.play();
     document.removeEventListener('keydown', this.checkKey);
-    this.section.querySelector('.game__main').remove();
+    document.removeEventListener('keydown', this.checkKeyAudiocall);
+    this.section.querySelector('.game__container').remove();
     const element = document.createElement('div');
     element.className = 'result';
     element.innerHTML = ` <div class="result__total">
     <h3 class="result__total_stat">Статистика</h3>
-    <p class="result__total_text">Набрано ${this.score} очков.</p>
+    ${this.type === 'sprint' ? `<p class="result__total_text">Набрано ${this.score} очков.</p>` : ''}
     </div>
     <div class="result__answers">
       <div class="result__section">
@@ -123,8 +124,8 @@ export default class Game {
     const againBtn = element.querySelector('.result__btn_again');
     againBtn.addEventListener('click', () => {
       shuffle(this.words);
-      Game.inst = new Game('sprint');
-      Game.inst.renderSprint(this.words);
+      Game.inst = new Game(this.type);
+      Game.inst.render(this.words);
     });
     this.section.append(element);
   }
@@ -147,7 +148,7 @@ export default class Game {
     this.wordNumber += 1;
     if (this.wordNumber === this.words.length) {
       clearInterval(this.timerID);
-      this.finishSprint();
+      this.finishGame();
     } else {
       this.updateSprint(this.correctAnswer);
     }
@@ -194,7 +195,7 @@ export default class Game {
     this.words = arr;
     this.section = document.createElement('section');
     this.section.className = 'game';
-    this.section.innerHTML = `<div class="game__main">
+    this.section.innerHTML = `<div class="game__main game__container">
     <div class="game__timer">
       <img class="game__timer-img" src="./assets/svg/clock.svg" alt="clock">
       <p class="game__timer-num">${this.timer}</p>
@@ -216,7 +217,7 @@ export default class Game {
       timerElement.textContent = `${this.timer}`;
       if (this.timer === 0) {
         clearInterval(this.timerID);
-        this.finishSprint();
+        this.finishGame();
       }
     }, 1000);
     this.root.innerHTML = `<header class="header">
@@ -234,26 +235,75 @@ export default class Game {
   private updateGameAudiocall(correct: boolean) {
     if (correct) {
       this.answers.correct.push(this.wordNumber);
-      this.audioCorrect.currentTime = 0;
-      this.audioCorrect.play();
     } else {
       this.answers.wrong.push(this.wordNumber);
-      this.audioWrong.currentTime = 0;
-      this.audioWrong.play();
     }
     this.wordNumber += 1;
     if (this.wordNumber === this.words.length) {
-      this.finishSprint();
+      this.finishGame();
     } else {
       this.updateAudiocall();
     }
+  }
+
+  private showAudiocallAnswer() {
+    const container = document.querySelector('.game-audio__word');
+    const audioBtn = document.querySelector('.game-audio__word_sound');
+    const audioBtnImg = document.querySelector('.game-audio__word_sound-img');
+    const text = document.createElement('p');
+    const img = document.createElement('img');
+    const imgInner = document.createElement('div');
+    container.classList.add('game-audio__word-show');
+    audioBtn.classList.add('game-audio__word_sound-show');
+    audioBtnImg.classList.add('game-audio__word_sound-img-show');
+    text.textContent = this.words[this.wordNumber].word;
+    text.className = 'game-audio__word_text';
+    container.append(text);
+    img.src = `${BASE}${this.words[this.wordNumber].image}`;
+    img.className = 'game-audio__word_img';
+    imgInner.className = 'game-audio__word_img-inner';
+    imgInner.append(img);
+    container.prepend(imgInner);
+  }
+
+  private checkAudiocall(num: number) {
+    const nextBtn = Game.inst.section.querySelector('.btn-next') as HTMLElement;
+    const btns: NodeListOf<HTMLElement> = Game.inst.section.querySelectorAll('.btn-answer');
+    const btn = btns[num];
+    if (btn.dataset.correct === 'true') {
+      Game.inst.correctAnswer = true;
+      Game.inst.audioCorrect.currentTime = 0;
+      Game.inst.audioCorrect.play();
+    } else {
+      Game.inst.audioWrong.currentTime = 0;
+      Game.inst.audioWrong.play();
+      btn.classList.add('game-audio__btn-wrong');
+    }
+    Game.inst.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
+    Game.inst.showAudiocallAnswer();
+    nextBtn.dataset.next = 'true';
+    nextBtn.textContent = 'Следующее';
+  }
+
+  private generateBtnAnswer(arr: number[]) {
+    const result: HTMLElement[] = [];
+    arr.forEach((item, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'game-audio__btn btn-answer';
+      btn.textContent = `${i + 1} ${this.words[item].wordTranslate}`;
+      btn.dataset.correct = 'false';
+      btn.dataset.num = `${i}`;
+      if (item === this.wordNumber) btn.dataset.correct = 'true';
+      result.push(btn);
+    });
+    return result;
   }
 
   private updateAudiocall() {
     const audio = new Audio(`${BASE}${this.words[this.wordNumber].audio}`);
     const variants = randomArrNum(this.wordNumber, this.words.length - 1);
     const element = document.createElement('div');
-    let correct = false;
+    this.correctAnswer = false;
     element.className = 'update-audiocall';
     element.innerHTML = `<div class="game-audio__word">
       <div class="game-audio__word_sound">
@@ -261,31 +311,27 @@ export default class Game {
       </div>
     </div>
     <div class="game-audio__answers">
-    </div>
-    <button class="game-audio__btn btn-next">Не знаю</button>`;
+    </div>`;
     const btnAudio = element.querySelector('.game-audio__word_sound');
     btnAudio.addEventListener('click', () => {
       audio.currentTime = 0;
       audio.play();
     });
     const btnContainer = element.querySelector('.game-audio__answers');
-    variants.forEach((item, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'game-audio__btn';
-      btn.textContent = `${i + 1} ${this.words[item].wordTranslate}`;
-      if (item === this.wordNumber) {
-        btn.dataset.correct = 'true';
-      } else {
-        btn.dataset.correct = 'false';
-      }
-      btn.addEventListener('click', () => {
-        if (btn.dataset.correct === 'true') correct = true;
+    const btnsArr = this.generateBtnAnswer(variants);
+    btnsArr.forEach((item) => {
+      btnContainer.append(item);
+      item.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const btnsArrNew = this.generateBtnAnswer(variants);
+        btnsArr.forEach((bt) => {
+          bt.remove();
+        });
+        btnsArrNew.forEach((bt) => {
+          btnContainer.append(bt);
+        });
+        this.checkAudiocall(+target.dataset.num);
       });
-      btnContainer.append(btn);
-    });
-    const nextBtn = element.querySelector('.btn-next');
-    nextBtn.addEventListener('click', () => {
-      this.updateGameAudiocall(correct);
     });
     const gameMain = this.section.querySelector('.game-audio');
     this.section.querySelector('.update-audiocall')?.remove();
@@ -293,13 +339,35 @@ export default class Game {
     setTimeout(() => audio.play(), 500);
   }
 
+  private checkKeyAudiocall(e: KeyboardEvent) {
+    const n = +e.key;
+    if (n > 0 && n < 6) Game.inst.checkAudiocall(n - 1);
+  }
+
   private renderAudiocall(arr: IWord[]) {
     this.words = arr;
     this.section = document.createElement('section');
     this.section.className = 'game';
-    this.section.innerHTML = `<div class="game-audio">
-      </div>`;
+    this.section.innerHTML = `<div class="game-audio game__container">
+    <button class="game-audio__btn btn-next" data-next="false">Не знаю</button>
+    </div>`;
     this.updateAudiocall();
+    document.addEventListener('keydown', this.checkKeyAudiocall);
+    const nextBtn = this.section.querySelector('.btn-next') as HTMLElement;
+    nextBtn.addEventListener('click', () => {
+      if (nextBtn.dataset.next === 'true') {
+        nextBtn.dataset.next = 'false';
+        nextBtn.textContent = 'Не знаю';
+        this.updateGameAudiocall(this.correctAnswer);
+      } else {
+        this.audioWrong.currentTime = 0;
+        this.audioWrong.play();
+        this.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
+        this.showAudiocallAnswer();
+        nextBtn.dataset.next = 'true';
+        nextBtn.textContent = 'Следующее';
+      }
+    });
     this.root.innerHTML = `<header class="header">
       <div class="header-home">RS Lang</div>
       <nav class="header-nav">

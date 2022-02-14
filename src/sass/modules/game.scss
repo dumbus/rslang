@@ -150,7 +150,7 @@
         cursor: pointer;
         border: none;
         color: white;
-        transition: all .7s;
+        transition: all 0.7s;
         &:hover {
           box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
         }
@@ -189,14 +189,16 @@
     &__word {
       display: flex;
       justify-content: center;
-      flex-direction: column;
-      align-items:center;
+      align-items: center;
       margin: 0 auto 50px;
       border-radius: 5px;
       width: 300px;
       padding: 30px;
+      column-gap: 20px;
+      row-gap: 30px;
+      flex-wrap: wrap;
       &-show {
-        background-color:white;
+        background-color: white;
       }
       &_sound {
         width: 120px;
@@ -207,7 +209,7 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all .5s;
+        transition: all 0.5s;
         &-show {
           width: 50px;
           height: 50px;
@@ -217,10 +219,24 @@
         }
         &-img {
           width: 50px;
-          transition: all .5s;
+          transition: all 0.5s;
           &-show {
             width: 25px;
           }
+        }
+      }
+      &_text {
+        color: black;
+        font-size: 24px;
+      }
+      &_img {
+        width: 175px;
+        height: 175px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid $blue;
+        &-inner {
+          width: 100%;
         }
       }
     }
@@ -235,19 +251,19 @@
       border-radius: 5px;
       padding: 10px 20px 10px 25px;
       font-size: 18px;
-      transition: all .7s;
-      &-right {
-        background-color: #5de07e;
-      }
+      transition: all 0.7s;
       &-wrong {
         background-color: #e0665d;
       }
-        &:hover {
-          box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
-        }
-        &:active {
-          box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2) inset;
-        }
+      &-right {
+        background-color: #5de07e;
+      }
+      &:hover {
+        box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+      }
+      &:active {
+        box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2) inset;
+      }
     }
   }
 }
@@ -344,7 +360,7 @@
     font-size: 18px;
     font-weight: 100;
     border: 1px solid;
-    transition: all .5s;
+    transition: all 0.5s;
     &:hover {
       box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
     }
