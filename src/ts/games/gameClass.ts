@@ -269,34 +269,35 @@ export default class Game {
   private checkAudiocall(num: number) {
     const nextBtn = Game.inst.section.querySelector('.btn-next') as HTMLElement;
     const btns: NodeListOf<HTMLElement> = Game.inst.section.querySelectorAll('.btn-answer');
-    const btn = btns[num];
-    if (btn.dataset.correct === 'true') {
-      Game.inst.correctAnswer = true;
-      Game.inst.audioCorrect.currentTime = 0;
-      Game.inst.audioCorrect.play();
-    } else {
-      Game.inst.audioWrong.currentTime = 0;
-      Game.inst.audioWrong.play();
-      btn.classList.add('game-audio__btn-wrong');
+    if (num !== 10 && nextBtn.dataset.next === 'false') {
+      const btn = btns[num];
+      if (btn.dataset.correct === 'true') {
+        Game.inst.correctAnswer = true;
+        Game.inst.audioCorrect.currentTime = 0;
+        Game.inst.audioCorrect.play();
+      } else {
+        Game.inst.audioWrong.currentTime = 0;
+        Game.inst.audioWrong.play();
+        btn.classList.add('game-audio__btn-wrong');
+      }
+      nextBtn.dataset.next = 'true';
+      nextBtn.textContent = 'Следующее';
+      Game.inst.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
+      Game.inst.showAudiocallAnswer();
+    } else if (num === 10) {
+      if (nextBtn.dataset.next === 'true') {
+        nextBtn.dataset.next = 'false';
+        nextBtn.textContent = 'Не знаю';
+        Game.inst.updateGameAudiocall(Game.inst.correctAnswer);
+      } else {
+        Game.inst.audioWrong.currentTime = 0;
+        Game.inst.audioWrong.play();
+        Game.inst.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
+        Game.inst.showAudiocallAnswer();
+        nextBtn.dataset.next = 'true';
+        nextBtn.textContent = 'Следующее';
+      }
     }
-    Game.inst.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
-    Game.inst.showAudiocallAnswer();
-    nextBtn.dataset.next = 'true';
-    nextBtn.textContent = 'Следующее';
-  }
-
-  private generateBtnAnswer(arr: number[]) {
-    const result: HTMLElement[] = [];
-    arr.forEach((item, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'game-audio__btn btn-answer';
-      btn.textContent = `${i + 1} ${this.words[item].wordTranslate}`;
-      btn.dataset.correct = 'false';
-      btn.dataset.num = `${i}`;
-      if (item === this.wordNumber) btn.dataset.correct = 'true';
-      result.push(btn);
-    });
-    return result;
   }
 
   private updateAudiocall() {
@@ -305,7 +306,8 @@ export default class Game {
     const element = document.createElement('div');
     this.correctAnswer = false;
     element.className = 'update-audiocall';
-    element.innerHTML = `<div class="game-audio__word">
+    element.innerHTML = `<p class="game-audio__total">Слово ${this.wordNumber + 1} / ${this.words.length}</p>
+    <div class="game-audio__word">
       <div class="game-audio__word_sound">
         <img src="./assets/svg/audio.svg" alt="audio" class="game-audio__word_sound-img">
       </div>
@@ -318,20 +320,16 @@ export default class Game {
       audio.play();
     });
     const btnContainer = element.querySelector('.game-audio__answers');
-    const btnsArr = this.generateBtnAnswer(variants);
-    btnsArr.forEach((item) => {
-      btnContainer.append(item);
-      item.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
-        const btnsArrNew = this.generateBtnAnswer(variants);
-        btnsArr.forEach((bt) => {
-          bt.remove();
-        });
-        btnsArrNew.forEach((bt) => {
-          btnContainer.append(bt);
-        });
-        this.checkAudiocall(+target.dataset.num);
+    variants.forEach((item, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'game-audio__btn btn-answer';
+      btn.textContent = `${i + 1} ${this.words[item].wordTranslate}`;
+      btn.dataset.correct = 'false';
+      if (item === this.wordNumber) btn.dataset.correct = 'true';
+      btn.addEventListener('click', () => {
+        this.checkAudiocall(i);
       });
+      btnContainer.append(btn);
     });
     const gameMain = this.section.querySelector('.game-audio');
     this.section.querySelector('.update-audiocall')?.remove();
@@ -340,8 +338,10 @@ export default class Game {
   }
 
   private checkKeyAudiocall(e: KeyboardEvent) {
+    e.preventDefault();
     const n = +e.key;
     if (n > 0 && n < 6) Game.inst.checkAudiocall(n - 1);
+    if (e.key === 'Enter') Game.inst.checkAudiocall(10);
   }
 
   private renderAudiocall(arr: IWord[]) {
@@ -355,18 +355,7 @@ export default class Game {
     document.addEventListener('keydown', this.checkKeyAudiocall);
     const nextBtn = this.section.querySelector('.btn-next') as HTMLElement;
     nextBtn.addEventListener('click', () => {
-      if (nextBtn.dataset.next === 'true') {
-        nextBtn.dataset.next = 'false';
-        nextBtn.textContent = 'Не знаю';
-        this.updateGameAudiocall(this.correctAnswer);
-      } else {
-        this.audioWrong.currentTime = 0;
-        this.audioWrong.play();
-        this.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
-        this.showAudiocallAnswer();
-        nextBtn.dataset.next = 'true';
-        nextBtn.textContent = 'Следующее';
-      }
+      this.checkAudiocall(10);
     });
     this.root.innerHTML = `<header class="header">
       <div class="header-home">RS Lang</div>
