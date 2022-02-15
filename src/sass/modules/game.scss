@@ -73,7 +73,7 @@
   cursor: pointer;
   transition: all 0.7s;
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
   }
   & span {
     width: 35px;
@@ -91,6 +91,23 @@
     transform: rotate(-45deg);
   }
 }
+.mute-game {
+  width: 35px;
+  height: 49px;
+  position: absolute;
+  background-color: black;
+  top: 25px;
+  right: 80px;
+  border: none;
+  -webkit-mask-image: url(../../assets/svg/note.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.7s;
+  &:hover {
+    transform: scale(1.15);
+  }
+}
 
 .game {
   width: 100%;
@@ -103,6 +120,7 @@
   color: white;
   &__main {
     text-align: center;
+    width: 400px;
   }
   &__total {
     font-size: 34px;
