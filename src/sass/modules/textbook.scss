@@ -22,6 +22,17 @@
       }
     }
   }
+  &-pages {
+    display: flex;
+    column-gap: 10px;
+    width: 30%;
+    margin: 20px auto 0 auto;
+    &-item {
+      width: 50%;
+      font-size: 20px;
+      padding: 20px;
+    }
+  }
   &-word {
     display: flex;
     justify-content: space-between;

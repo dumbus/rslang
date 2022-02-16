@@ -78,6 +78,8 @@ const createWords = async (group: number, page: number) => {
 };
 
 export const createTextbook = async (group = 0, page = 0) => {
+  sessionStorage.setItem('rs-group', String(group));
+  sessionStorage.setItem('rs-page', String(page));
   const textbookBlock = document.createElement('div');
   textbookBlock.classList.add('textbook');
 
@@ -92,6 +94,10 @@ export const createTextbook = async (group = 0, page = 0) => {
     </nav>
     <h1 class="textbook-title title">Группа ${group + 1}</h1>
     <h2 class="textbook-subtitle subtitle">Страница ${page + 1}</h2>
+    <nav class="textbook-pages">
+      <button class="textbook-pages-item textbook-pages-item-prev button">< Предыдущая</button>
+      <button class="textbook-pages-item textbook-pages-item-next button">Следующая ></button>
+    </nav>
   `;
   textbookBlock.querySelectorAll('.textbook-nav-item')[group].classList.add('textbook-nav-item-active');
   textbookBlock.querySelector('.textbook-title').classList.add(`title-${group + 1}`);
@@ -100,10 +106,23 @@ export const createTextbook = async (group = 0, page = 0) => {
   const wordsBlock = await createWords(group, page);
   textbookBlock.append(wordsBlock);
 
+  textbookBlock.querySelectorAll('.button').forEach((button) => {
+    button.classList.add(`button-${group + 1}`);
+  });
+
+  if (page === 0) {
+    const button = <HTMLButtonElement>textbookBlock.querySelector('.textbook-pages-item-prev');
+    button.disabled = true;
+  }
+
+  if (page === 29) {
+    const button = <HTMLButtonElement>textbookBlock.querySelector('.textbook-pages-item-next');
+    button.disabled = true;
+  }
+
   const audioBlock = document.createElement('audio');
   audioBlock.classList.add('audio');
   textbookBlock.append(audioBlock);
-  console.log(group);
 
   return textbookBlock;
 };

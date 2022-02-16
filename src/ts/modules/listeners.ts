@@ -6,6 +6,8 @@ const addTextbookListeners = async () => {
   const main = document.querySelector('.main');
   const textbookAudioBtns = document.querySelectorAll('.textbook-word-content-audiobtn');
   const groupBtns = document.querySelectorAll('.textbook-nav-item');
+  const prevPageBtn = document.querySelector('.textbook-pages-item-prev');
+  const nextPageBtn = document.querySelector('.textbook-pages-item-next');
 
   textbookAudioBtns.forEach((audioBtn) => {
     audioBtn.addEventListener('click', () => {
@@ -22,6 +24,26 @@ const addTextbookListeners = async () => {
       main.append(textbookContent);
       addTextbookListeners();
     });
+  });
+
+  prevPageBtn.addEventListener('click', async () => {
+    main.innerHTML = '';
+    const currentGroup = +sessionStorage.getItem('rs-group');
+    const currentPage = +sessionStorage.getItem('rs-page');
+
+    const textbookContent = await createTextbook(currentGroup, currentPage - 1);
+    main.append(textbookContent);
+    addTextbookListeners();
+  });
+
+  nextPageBtn.addEventListener('click', async () => {
+    main.innerHTML = '';
+    const currentGroup = +sessionStorage.getItem('rs-group');
+    const currentPage = +sessionStorage.getItem('rs-page');
+
+    const textbookContent = await createTextbook(currentGroup, currentPage + 1);
+    main.append(textbookContent);
+    addTextbookListeners();
   });
 };
 

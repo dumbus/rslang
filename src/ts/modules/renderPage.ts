@@ -41,6 +41,7 @@ export const renderPage = async () => {
   const headerBlock = createHeader();
   const footerBlock = createFooter();
   const mainscreenBlock = createMainscreen();
+  // const textbookBlock = await createTextbook(0, 0);
 
   container.prepend(headerBlock);
   container.append(footerBlock);
