@@ -1,5 +1,5 @@
 import { IWord } from '../interfaces';
-import { getWords } from './api';
+import { getWords } from '../api';
 
 const base = 'https://rs-lang-bckend.herokuapp.com';
 
