@@ -17,6 +17,7 @@ ul {
 
 .container {
   max-width: 1440px;
+  position: relative;
   margin: 0 auto;
 }
 
@@ -28,9 +29,28 @@ ul {
   padding: 5px 10px;
   background-color: $blue;
   border-radius: 5px;
+  border: none;
   &:hover {
     filter: grayscale(50%);
     cursor: pointer;
+  }
+  &-1 {
+    background-color: $group-1-light;
+  }
+  &-2 {
+    background-color: $group-2-light;
+  }
+  &-3 {
+    background-color: $group-3-light;
+  }
+  &-4 {
+    background-color: $group-4-light;
+  }
+  &-5 {
+    background-color: $group-5-light;
+  }
+  &-6 {
+    background-color: $group-6-light;
   }
 }
 
@@ -40,6 +60,24 @@ ul {
   border-radius: 5px;
   font-size: 28px;
   text-align: center;
+  &-1 {
+    background-color: $group-1;
+  }
+  &-2 {
+    background-color: $group-2;
+  }
+  &-3 {
+    background-color: $group-3;
+  }
+  &-4 {
+    background-color: $group-4;
+  }
+  &-5 {
+    background-color: $group-5;
+  }
+  &-6 {
+    background-color: $group-6;
+  }
 }
 
 .subtitle {
@@ -49,6 +87,24 @@ ul {
   background-color: $light-green;
   border-radius: 5px;
   font-size: 24px;
+  &-1 {
+    background-color: $group-1-light;
+  }
+  &-2 {
+    background-color: $group-2-light;
+  }
+  &-3 {
+    background-color: $group-3-light;
+  }
+  &-4 {
+    background-color: $group-4-light;
+  }
+  &-5 {
+    background-color: $group-5-light;
+  }
+  &-6 {
+    background-color: $group-6-light;
+  }
 }
 
 .hidden {
@@ -58,3 +114,5 @@ ul {
 @import "./modules/header.scss";
 @import "./modules/mainscreen.scss";
 @import "./modules/game.scss";
+@import "./modules/textbook.scss";
+@import "./modules/footer.scss";
