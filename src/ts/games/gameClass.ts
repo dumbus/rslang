@@ -1,6 +1,7 @@
 import { BASE, getWords, getWordsAllGroup } from '../api';
 import { IDescriptGame, IWord } from '../interfaces';
 import { shuffle, randomInteger, randomNoRepeatNum, randomArrNum } from '../utils';
+import { createMainscreen } from '../modules/mainscreen';
 
 const SPRINT_DESCRIPTION = {
   title: 'Спринт',
@@ -37,7 +38,7 @@ export default class Game {
   constructor(type: 'sprint' | 'audiocall') {
     this.type = type;
     this.description = type === 'sprint' ? SPRINT_DESCRIPTION : AUDIOCALL_DESCRIPTION;
-    this.root = document.querySelector('.root');
+    this.root = document.querySelector('.main');
     this.wordNumber = 0;
     this.score = 0;
     this.addScore = 10;
@@ -128,6 +129,11 @@ export default class Game {
       Game.inst = new Game(this.type);
       Game.inst.render(this.words);
     });
+    const closeBtn = element.querySelector('.result__btn_close');
+    closeBtn.addEventListener('click', () => {
+      this.root.innerHTML = '';
+      this.root.append(createMainscreen());
+    });
     this.section.append(element);
   }
 
@@ -213,7 +219,7 @@ export default class Game {
     this.words = arr;
     this.section = document.createElement('section');
     this.section.className = 'game';
-    this.section.innerHTML = `<div class="container">
+    this.section.innerHTML = `
     <button class="close-game">
       <span class="close-game__span-1"></span>
       <span class="close-game__span-2"></span>
@@ -224,9 +230,14 @@ export default class Game {
         <img class="game__timer-img" src="./assets/svg/clock.svg" alt="clock">
         <p class="game__timer-num">${this.timer}</p>
       </div>
-    </div>
     </div>`;
     this.section.querySelector('.mute-game').addEventListener('click', this.toggleMute.bind(this));
+    const closeBtn = this.section.querySelector('.close-game');
+    closeBtn.addEventListener('click', () => {
+      this.root.innerHTML = '';
+      this.root.append(createMainscreen());
+      clearInterval(this.timerID);
+    });
     this.updateSprint(this.correctAnswer);
     const gameMain = this.section.querySelector('.game__main');
     const timerElement = this.section.querySelector('.game__timer-num');
@@ -246,15 +257,7 @@ export default class Game {
         this.finishGame();
       }
     }, 1000);
-    this.root.innerHTML = `<header class="header">
-      <div class="header-home">RS Lang</div>
-      <nav class="header-nav">
-        <div class="header-nav-textbook button">Учебник</div>
-        <div class="header-nav-stats button">Статистика</div>
-        <div class="header-nav-audio button">Аудиовызов</div>
-        <div class="header-nav-sprint button">Спринт</div>
-      </nav>
-    </header>`;
+    this.root.innerHTML = '';
     this.root.append(this.section);
   }
 
@@ -291,7 +294,7 @@ export default class Game {
         if (this.type === 'sprint') {
           arr = await getWordsAllGroup(item.dataset.num);
         } else {
-          arr = await getWords(item.dataset.num);
+          arr = await getWords(Number(item.dataset.num));
         }
         shuffle(arr);
         this.render(arr);
@@ -299,7 +302,8 @@ export default class Game {
     });
     const closeBtn = this.root.querySelector('.close-game');
     closeBtn.addEventListener('click', () => {
-      console.log('close');
+      this.root.innerHTML = '';
+      this.root.append(createMainscreen());
     });
   }
 }

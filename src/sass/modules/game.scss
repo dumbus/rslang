@@ -111,7 +111,7 @@
 
 .game {
   width: 100%;
-  height: calc(100vh - 80px);
+  height: 100vh;
   position: relative;
   background: linear-gradient($light-green 0%, $blue);
   display: flex;
@@ -403,7 +403,7 @@
 .lds-ring {
   display: inline-block;
   position: absolute;
-  top: calc(50% - 40px);
+  top: calc(50vh - 40px);
   left: calc(50% - 40px);
   width: 80px;
   height: 80px;

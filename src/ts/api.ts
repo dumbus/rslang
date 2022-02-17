@@ -3,7 +3,7 @@ import { IWord } from './interfaces';
 export const BASE = 'https://rs-lang-bckend.herokuapp.com/';
 const WORDS = `${BASE}words`;
 
-export async function getWords(group = '0', page = '0') {
+export async function getWords(group = 0, page = 0) {
   const res = await fetch(`${WORDS}?group=${group}&page=${page}`);
   const arr: IWord[] = await res.json();
   return arr;

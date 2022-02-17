@@ -1,3 +1,4 @@
+import Game from '../games/gameClass';
 import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
@@ -50,6 +51,8 @@ const addTextbookListeners = async () => {
 export const addHeaderListeners = async () => {
   const mainscreenButton = document.querySelector('.header-home');
   const textbookButton = document.querySelector('.header-nav-textbook');
+  const sprintButton = document.querySelector('.header-nav-sprint');
+  const aydiocallButton = document.querySelector('.header-nav-audio');
 
   const main = document.querySelector('.main');
 
@@ -64,5 +67,10 @@ export const addHeaderListeners = async () => {
     const textbookContent = await createTextbook();
     main.append(textbookContent);
     addTextbookListeners();
+  });
+
+  sprintButton.addEventListener('click', () => {
+    Game.inst = new Game('sprint');
+    Game.inst.startPage();
   });
 };
