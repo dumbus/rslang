@@ -33,6 +33,7 @@ export default class Game {
   };
   timer: number;
   timerID: NodeJS.Timer;
+  mute: boolean;
   constructor(type: 'sprint' | 'audiocall') {
     this.type = type;
     this.description = type === 'sprint' ? SPRINT_DESCRIPTION : AUDIOCALL_DESCRIPTION;
@@ -50,6 +51,7 @@ export default class Game {
       correct: [],
       wrong: []
     };
+    this.mute = false;
   }
   static inst: Game;
 
@@ -93,7 +95,7 @@ export default class Game {
     this.audioFinish.play();
     document.removeEventListener('keydown', this.checkKey);
     document.removeEventListener('keydown', this.checkKeyAudiocall);
-    this.section.querySelector('.game__container').remove();
+    this.section.innerHTML = '';
     const element = document.createElement('div');
     element.className = 'result';
     element.innerHTML = ` <div class="result__total">
@@ -128,6 +130,23 @@ export default class Game {
       Game.inst.render(this.words);
     });
     this.section.append(element);
+  }
+
+  private toggleMute() {
+    const btn: HTMLElement = this.section.querySelector('.mute-game');
+    if (this.mute) {
+      this.mute = false;
+      btn.style.backgroundColor = '';
+      this.audioCorrect.muted = false;
+      this.audioWrong.muted = false;
+      this.audioFinish.muted = false;
+    } else {
+      this.mute = true;
+      btn.style.backgroundColor = '#c0c0c0';
+      this.audioCorrect.muted = true;
+      this.audioWrong.muted = true;
+      this.audioFinish.muted = true;
+    }
   }
 
   private updateGameSprint(correct: boolean) {
@@ -195,12 +214,20 @@ export default class Game {
     this.words = arr;
     this.section = document.createElement('section');
     this.section.className = 'game';
-    this.section.innerHTML = `<div class="game__main game__container">
-    <div class="game__timer">
-      <img class="game__timer-img" src="./assets/svg/clock.svg" alt="clock">
-      <p class="game__timer-num">${this.timer}</p>
+    this.section.innerHTML = `<div class="container">
+    <button class="close-game">
+      <span class="close-game__span-1"></span>
+      <span class="close-game__span-2"></span>
+    </button>
+    <button class="mute-game"></button>
+      <div class="game__main game__container">
+      <div class="game__timer">
+        <img class="game__timer-img" src="./assets/svg/clock.svg" alt="clock">
+        <p class="game__timer-num">${this.timer}</p>
+      </div>
     </div>
-  </div>`;
+    </div>`;
+    this.section.querySelector('.mute-game').addEventListener('click', this.toggleMute.bind(this));
     this.updateSprint(this.correctAnswer);
     const gameMain = this.section.querySelector('.game__main');
     const timerElement = this.section.querySelector('.game__timer-num');
@@ -221,14 +248,14 @@ export default class Game {
       }
     }, 1000);
     this.root.innerHTML = `<header class="header">
-  <div class="header-home">RS Lang</div>
-  <nav class="header-nav">
-    <div class="header-nav-textbook button">Учебник</div>
-    <div class="header-nav-stats button">Статистика</div>
-    <div class="header-nav-audio button">Аудиовызов</div>
-    <div class="header-nav-sprint button">Спринт</div>
-  </nav>
-</header>`;
+      <div class="header-home">RS Lang</div>
+      <nav class="header-nav">
+        <div class="header-nav-textbook button">Учебник</div>
+        <div class="header-nav-stats button">Статистика</div>
+        <div class="header-nav-audio button">Аудиовызов</div>
+        <div class="header-nav-sprint button">Спринт</div>
+      </nav>
+    </header>`;
     this.root.append(this.section);
   }
 
@@ -348,9 +375,17 @@ export default class Game {
     this.words = arr;
     this.section = document.createElement('section');
     this.section.className = 'game';
-    this.section.innerHTML = `<div class="game-audio game__container">
+    this.section.innerHTML = `<div class="container">
+    <button class="close-game">
+      <span class="close-game__span-1"></span>
+      <span class="close-game__span-2"></span>
+    </button>
+    <button class="mute-game"></button>
+    <div class="game-audio game__container">
     <button class="game-audio__btn btn-next" data-next="false">Не знаю</button>
+    </div>
     </div>`;
+    this.section.querySelector('.mute-game').addEventListener('click', this.toggleMute.bind(this));
     this.updateAudiocall();
     document.addEventListener('keydown', this.checkKeyAudiocall);
     const nextBtn = this.section.querySelector('.btn-next') as HTMLElement;
