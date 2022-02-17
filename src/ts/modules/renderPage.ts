@@ -1,5 +1,4 @@
 import { createMainscreen } from './mainscreen';
-import { createTextbook } from './textbook';
 import { addHeaderListeners } from './listeners';
 
 const createHeader = () => {
