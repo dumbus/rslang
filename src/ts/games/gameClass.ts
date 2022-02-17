@@ -399,10 +399,10 @@ export default class Game {
     const levels = this.root.querySelectorAll('.btn-number') as NodeListOf<HTMLElement>;
     levels.forEach((item) => {
       item.addEventListener('click', async () => {
+        this.root.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div><div></div></div>';
         let arr: IWord[];
         if (this.type === 'sprint') {
           arr = await getWordsAllGroup(item.dataset.num);
-          shuffle(arr);
         } else {
           arr = await getWords(item.dataset.num);
         }
