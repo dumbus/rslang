@@ -52,7 +52,7 @@ export const addHeaderListeners = async () => {
   const mainscreenButton = document.querySelector('.header-home');
   const textbookButton = document.querySelector('.header-nav-textbook');
   const sprintButton = document.querySelector('.header-nav-sprint');
-  const aydiocallButton = document.querySelector('.header-nav-audio');
+  const audiocallButton = document.querySelector('.header-nav-audio');
 
   const main = document.querySelector('.main');
 
@@ -71,6 +71,19 @@ export const addHeaderListeners = async () => {
 
   sprintButton.addEventListener('click', () => {
     Game.inst = new Game('sprint');
-    Game.inst.startPage();
+    if (Game.textbook) {
+      Game.inst.render(Game.arrWords);
+    } else {
+      Game.inst.startPage();
+    }
+  });
+
+  audiocallButton.addEventListener('click', () => {
+    Game.inst = new Game('audiocall');
+    if (Game.textbook) {
+      Game.inst.render(Game.arrWords);
+    } else {
+      Game.inst.startPage();
+    }
   });
 };

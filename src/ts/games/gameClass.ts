@@ -55,6 +55,8 @@ export default class Game {
     this.mute = false;
   }
   static inst: Game;
+  static textbook = false;
+  static arrWords: IWord[];
 
   private updateScoreLevel() {
     this.scoreLevel += 1;
@@ -378,7 +380,7 @@ export default class Game {
     this.words = arr;
     this.section = document.createElement('section');
     this.section.className = 'game';
-    this.section.innerHTML = `<div class="container">
+    this.section.innerHTML = `
     <button class="close-game">
       <span class="close-game__span-1"></span>
       <span class="close-game__span-2"></span>
@@ -386,7 +388,6 @@ export default class Game {
     <button class="mute-game"></button>
     <div class="game-audio game__container">
     <button class="game-audio__btn btn-next" data-next="false">Не знаю</button>
-    </div>
     </div>`;
     this.section.querySelector('.mute-game').addEventListener('click', this.toggleMute.bind(this));
     const closeBtn = this.section.querySelector('.close-game');
@@ -404,7 +405,7 @@ export default class Game {
     this.root.append(this.section);
   }
 
-  private render(arr: IWord[]) {
+  render(arr: IWord[]) {
     if (this.type === 'sprint') {
       this.renderSprint(arr);
     } else {
