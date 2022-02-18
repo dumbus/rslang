@@ -18,3 +18,12 @@ export interface IDescriptGame {
   title: string;
   text: string;
 }
+
+export interface IWordOptional {
+  correctAnswers: number;
+}
+
+export interface IWordStatistics {
+  difficulty: string;
+  optional: IWordOptional;
+}
