@@ -1,5 +1,6 @@
 import { IWord } from '../interfaces';
 import { getWords } from '../api';
+import Game from '../games/gameClass';
 
 const base = 'https://rs-lang-bckend.herokuapp.com';
 
@@ -69,6 +70,9 @@ const createWords = async (group: number, page: number) => {
   const wordsBlock = document.createElement('div');
   wordsBlock.classList.add('.textbook-words');
   const response = await getWords(group, page);
+
+  Game.arrWords = response;
+  Game.textbook = true;
 
   response.forEach((word: IWord) => {
     wordsBlock.append(createWord(word));

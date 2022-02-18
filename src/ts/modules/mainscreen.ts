@@ -1,4 +1,7 @@
+import Game from '../games/gameClass';
+
 export const createMainscreen = () => {
+  Game.textbook = false;
   const mainscreenBlock = document.createElement('div');
   mainscreenBlock.classList.add('mainscreen');
 

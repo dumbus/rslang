@@ -55,6 +55,8 @@ export default class Game {
     this.mute = false;
   }
   static inst: Game;
+  static textbook = false;
+  static arrWords: IWord[];
 
   private updateScoreLevel() {
     this.scoreLevel += 1;
@@ -95,6 +97,7 @@ export default class Game {
   private finishGame() {
     this.audioFinish.play();
     document.removeEventListener('keydown', this.checkKey);
+    document.removeEventListener('keydown', this.checkKeyAudiocall);
     this.section.innerHTML = '';
     const element = document.createElement('div');
     element.className = 'result';
@@ -261,9 +264,152 @@ export default class Game {
     this.root.append(this.section);
   }
 
-  private render(arr: IWord[]) {
+  private updateGameAudiocall(correct: boolean) {
+    if (correct) {
+      this.answers.correct.push(this.wordNumber);
+    } else {
+      this.answers.wrong.push(this.wordNumber);
+    }
+    this.wordNumber += 1;
+    if (this.wordNumber === this.words.length) {
+      this.finishGame();
+    } else {
+      this.updateAudiocall();
+    }
+  }
+
+  private showAudiocallAnswer() {
+    const container = document.querySelector('.game-audio__word');
+    const audioBtn = document.querySelector('.game-audio__word_sound');
+    const audioBtnImg = document.querySelector('.game-audio__word_sound-img');
+    const text = document.createElement('p');
+    const img = document.createElement('img');
+    const imgInner = document.createElement('div');
+    container.classList.add('game-audio__word-show');
+    audioBtn.classList.add('game-audio__word_sound-show');
+    audioBtnImg.classList.add('game-audio__word_sound-img-show');
+    text.textContent = this.words[this.wordNumber].word;
+    text.className = 'game-audio__word_text';
+    container.append(text);
+    img.src = `${BASE}${this.words[this.wordNumber].image}`;
+    img.className = 'game-audio__word_img';
+    imgInner.className = 'game-audio__word_img-inner';
+    imgInner.append(img);
+    container.prepend(imgInner);
+  }
+
+  private checkAudiocall(num: number) {
+    const nextBtn = Game.inst.section.querySelector('.btn-next') as HTMLElement;
+    const btns: NodeListOf<HTMLElement> = Game.inst.section.querySelectorAll('.btn-answer');
+    if (num !== 10 && nextBtn.dataset.next === 'false') {
+      const btn = btns[num];
+      if (btn.dataset.correct === 'true') {
+        Game.inst.correctAnswer = true;
+        Game.inst.audioCorrect.currentTime = 0;
+        Game.inst.audioCorrect.play();
+      } else {
+        Game.inst.audioWrong.currentTime = 0;
+        Game.inst.audioWrong.play();
+        btn.classList.add('game-audio__btn-wrong');
+      }
+      nextBtn.dataset.next = 'true';
+      nextBtn.textContent = 'Следующее';
+      Game.inst.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
+      Game.inst.showAudiocallAnswer();
+    } else if (num === 10) {
+      if (nextBtn.dataset.next === 'true') {
+        nextBtn.dataset.next = 'false';
+        nextBtn.textContent = 'Не знаю';
+        Game.inst.updateGameAudiocall(Game.inst.correctAnswer);
+      } else {
+        Game.inst.audioWrong.currentTime = 0;
+        Game.inst.audioWrong.play();
+        Game.inst.section.querySelector('[data-correct="true"]').classList.add('game-audio__btn-right');
+        Game.inst.showAudiocallAnswer();
+        nextBtn.dataset.next = 'true';
+        nextBtn.textContent = 'Следующее';
+      }
+    }
+  }
+
+  private updateAudiocall() {
+    const audio = new Audio(`${BASE}${this.words[this.wordNumber].audio}`);
+    const variants = randomArrNum(this.wordNumber, this.words.length - 1);
+    const element = document.createElement('div');
+    this.correctAnswer = false;
+    element.className = 'update-audiocall';
+    element.innerHTML = `<p class="game-audio__total">Слово ${this.wordNumber + 1} / ${this.words.length}</p>
+    <div class="game-audio__word">
+      <div class="game-audio__word_sound">
+        <img src="./assets/svg/audio.svg" alt="audio" class="game-audio__word_sound-img">
+      </div>
+    </div>
+    <div class="game-audio__answers">
+    </div>`;
+    const btnAudio = element.querySelector('.game-audio__word_sound');
+    btnAudio.addEventListener('click', () => {
+      audio.currentTime = 0;
+      audio.play();
+    });
+    const btnContainer = element.querySelector('.game-audio__answers');
+    variants.forEach((item, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'game-audio__btn btn-answer';
+      btn.textContent = `${i + 1} ${this.words[item].wordTranslate}`;
+      btn.dataset.correct = 'false';
+      if (item === this.wordNumber) btn.dataset.correct = 'true';
+      btn.addEventListener('click', () => {
+        this.checkAudiocall(i);
+      });
+      btnContainer.append(btn);
+    });
+    const gameMain = this.section.querySelector('.game-audio');
+    this.section.querySelector('.update-audiocall')?.remove();
+    gameMain.prepend(element);
+    setTimeout(() => audio.play(), 500);
+  }
+
+  private checkKeyAudiocall(e: KeyboardEvent) {
+    e.preventDefault();
+    const n = +e.key;
+    if (n > 0 && n < 6) Game.inst.checkAudiocall(n - 1);
+    if (e.key === 'Enter') Game.inst.checkAudiocall(10);
+  }
+
+  private renderAudiocall(arr: IWord[]) {
+    this.words = arr;
+    this.section = document.createElement('section');
+    this.section.className = 'game';
+    this.section.innerHTML = `
+    <button class="close-game">
+      <span class="close-game__span-1"></span>
+      <span class="close-game__span-2"></span>
+    </button>
+    <button class="mute-game"></button>
+    <div class="game-audio game__container">
+    <button class="game-audio__btn btn-next" data-next="false">Не знаю</button>
+    </div>`;
+    this.section.querySelector('.mute-game').addEventListener('click', this.toggleMute.bind(this));
+    const closeBtn = this.section.querySelector('.close-game');
+    closeBtn.addEventListener('click', () => {
+      this.root.innerHTML = '';
+      this.root.append(createMainscreen());
+    });
+    this.updateAudiocall();
+    document.addEventListener('keydown', this.checkKeyAudiocall);
+    const nextBtn = this.section.querySelector('.btn-next') as HTMLElement;
+    nextBtn.addEventListener('click', () => {
+      this.checkAudiocall(10);
+    });
+    this.root.innerHTML = '';
+    this.root.append(this.section);
+  }
+
+  render(arr: IWord[]) {
     if (this.type === 'sprint') {
       this.renderSprint(arr);
+    } else {
+      this.renderAudiocall(arr);
     }
   }
 
