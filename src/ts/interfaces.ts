@@ -33,3 +33,11 @@ export type ResultGame = {
   wordID: string;
   correct: boolean;
 }[];
+
+export interface ISignIn {
+  message: string;
+  token: string;
+  refreshToken: string;
+  userId: string;
+  name: string;
+}
