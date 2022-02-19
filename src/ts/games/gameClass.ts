@@ -1,7 +1,8 @@
 import { BASE, getWords, getWordsAllGroup } from '../api';
-import { IDescriptGame, IWord } from '../interfaces';
+import { IDescriptGame, IWord, ResultGame } from '../interfaces';
 import { shuffle, randomInteger, randomNoRepeatNum, randomArrNum } from '../utils';
 import { createMainscreen } from '../modules/mainscreen';
+import UserWords from '../modules/statistics';
 
 const SPRINT_DESCRIPTION = {
   title: 'Спринт',
@@ -92,6 +93,17 @@ export default class Game {
       items.append(item);
     });
     return items;
+  }
+
+  private pushResult(answers: { correct: number[]; wrong: number[] }) {
+    const result: ResultGame = [];
+    answers.correct.forEach((i) => {
+      result.push({ wordID: this.words[i].id, correct: true });
+    });
+    answers.wrong.forEach((i) => {
+      result.push({ wordID: this.words[i].id, correct: false });
+    });
+    UserWords.inst.parseResultGame(result);
   }
 
   private finishGame() {

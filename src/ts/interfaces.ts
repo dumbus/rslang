@@ -20,6 +20,7 @@ export interface IDescriptGame {
 }
 
 export interface IWordOptional {
+  wordID: string;
   correctAnswers: number;
 }
 
@@ -27,3 +28,8 @@ export interface IWordStatistics {
   difficulty: string;
   optional: IWordOptional;
 }
+
+export type ResultGame = {
+  wordID: string;
+  correct: boolean;
+}[];
