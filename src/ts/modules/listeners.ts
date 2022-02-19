@@ -2,6 +2,7 @@ import Game from '../games/gameClass';
 import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
+import { addLoader } from '../utils';
 
 const addTextbookListeners = async () => {
   const main = document.querySelector('.main');
@@ -21,6 +22,7 @@ const addTextbookListeners = async () => {
       const groupNumber = +btn.getAttribute('data-num');
       main.innerHTML = '';
 
+      addLoader();
       const textbookContent = await createTextbook(groupNumber);
       main.append(textbookContent);
       addTextbookListeners();
@@ -32,6 +34,7 @@ const addTextbookListeners = async () => {
     const currentGroup = +sessionStorage.getItem('rs-group');
     const currentPage = +sessionStorage.getItem('rs-page');
 
+    addLoader();
     const textbookContent = await createTextbook(currentGroup, currentPage - 1);
     main.append(textbookContent);
     addTextbookListeners();
@@ -42,6 +45,7 @@ const addTextbookListeners = async () => {
     const currentGroup = +sessionStorage.getItem('rs-group');
     const currentPage = +sessionStorage.getItem('rs-page');
 
+    addLoader();
     const textbookContent = await createTextbook(currentGroup, currentPage + 1);
     main.append(textbookContent);
     addTextbookListeners();
@@ -64,6 +68,7 @@ export const addHeaderListeners = async () => {
   textbookButton.addEventListener('click', async () => {
     main.innerHTML = '';
 
+    addLoader();
     const textbookContent = await createTextbook();
     main.append(textbookContent);
     addTextbookListeners();
