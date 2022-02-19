@@ -27,3 +27,20 @@ export function randomArrNum(num: number, max: number) {
   shuffle(arr);
   return arr;
 }
+
+export const addLoader = () => {
+  const main = <HTMLElement>document.querySelector('.main');
+  const overlay = document.createElement('div');
+  overlay.classList.add('overlay-loader');
+
+  overlay.innerHTML = `
+    <div class="lds-ring-loader">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  `;
+
+  main.append(overlay);
+};

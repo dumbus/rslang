@@ -11,12 +11,17 @@
   user-select: none;
 }
 
+html {
+  overflow-x: hidden;
+  margin-right: calc(-1 * (100vw - 100%));
+}
+
 ul {
   list-style: none;
 }
 
 .container {
-  max-width: 1440px;
+  width: 1440px;
   position: relative;
   margin: 0 auto;
 }
@@ -110,6 +115,15 @@ ul {
   }
 }
 
+.overlay-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 40px);
+  background-color: #FFF;
+}
+
 .hidden {
   display: none;
 }
@@ -119,3 +133,5 @@ ul {
 @import "./modules/game.scss";
 @import "./modules/textbook.scss";
 @import "./modules/footer.scss";
+@import "./modules/loader.scss";
+@import "./modules/media.scss";
