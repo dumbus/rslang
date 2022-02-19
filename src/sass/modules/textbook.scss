@@ -25,7 +25,7 @@
   &-pages {
     display: flex;
     column-gap: 10px;
-    width: 30%;
+    max-width: 400px;
     margin: 20px auto 0 auto;
     &-item {
       width: 50%;
