@@ -19,34 +19,38 @@ const addTextbookListeners = async () => {
 
   groupBtns.forEach((btn) => {
     btn.addEventListener('click', async () => {
-      const groupNumber = +btn.getAttribute('data-num');
-      main.innerHTML = '';
-
+      main.querySelector('div').classList.add('hidden');
       addLoader();
+      const groupNumber = +btn.getAttribute('data-num');
+
       const textbookContent = await createTextbook(groupNumber);
+      main.innerHTML = '';
       main.append(textbookContent);
       addTextbookListeners();
     });
   });
 
   prevPageBtn.addEventListener('click', async () => {
-    main.innerHTML = '';
+    main.querySelector('div').classList.add('hidden');
+    addLoader();
     const currentGroup = +sessionStorage.getItem('rs-group');
     const currentPage = +sessionStorage.getItem('rs-page');
 
-    addLoader();
     const textbookContent = await createTextbook(currentGroup, currentPage - 1);
+    main.innerHTML = '';
     main.append(textbookContent);
     addTextbookListeners();
   });
 
   nextPageBtn.addEventListener('click', async () => {
-    main.innerHTML = '';
+    main.querySelector('div').classList.add('hidden');
+    addLoader();
     const currentGroup = +sessionStorage.getItem('rs-group');
     const currentPage = +sessionStorage.getItem('rs-page');
 
     addLoader();
     const textbookContent = await createTextbook(currentGroup, currentPage + 1);
+    main.innerHTML = '';
     main.append(textbookContent);
     addTextbookListeners();
   });
@@ -66,10 +70,11 @@ export const addHeaderListeners = async () => {
   });
 
   textbookButton.addEventListener('click', async () => {
-    main.innerHTML = '';
-
+    main.querySelector('div').classList.add('hidden');
     addLoader();
+
     const textbookContent = await createTextbook();
+    main.innerHTML = '';
     main.append(textbookContent);
     addTextbookListeners();
   });

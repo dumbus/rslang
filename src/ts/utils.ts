@@ -31,10 +31,10 @@ export function randomArrNum(num: number, max: number) {
 export const addLoader = () => {
   const main = <HTMLElement>document.querySelector('.main');
   const overlay = document.createElement('div');
-  overlay.classList.add('overlay');
+  overlay.classList.add('overlay-loader');
 
   overlay.innerHTML = `
-    <div class="lds-ring">
+    <div class="lds-ring-loader">
       <div></div>
       <div></div>
       <div></div>
@@ -43,8 +43,4 @@ export const addLoader = () => {
   `;
 
   main.append(overlay);
-
-  setTimeout(() => {
-    overlay.remove();
-  }, 500);
 };
