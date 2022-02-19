@@ -4,6 +4,7 @@ import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
 import { addLoader } from '../utils';
 import { createAuthorisation, createProfile } from './renderPage';
+import { createUser, signIn } from '../api';
 
 const addTextbookListeners = async () => {
   const main = document.querySelector('.main');
@@ -76,6 +77,32 @@ export const addAuthorisationListeners = () => {
     main.append(authorisationContent);
     addAuthorisationListeners();
   });
+
+  const authorisationButton = document.querySelector('.authorisation-modal-form-submit');
+  const inputName: HTMLInputElement = document.querySelector('.authorisation-modal-form-name');
+  const inputEmail: HTMLInputElement = document.querySelector('.authorisation-modal-form-email');
+  const inputPassword: HTMLInputElement = document.querySelector('.authorisation-modal-form-password');
+  authorisationButton.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = inputEmail.value;
+    const password = inputPassword.value;
+    if (sessionStorage.getItem('authorisation-state') === 'registration') {
+      await createUser(inputName.value, email, password);
+    }
+    await signIn(email, password);
+    main.innerHTML = '';
+    main.append(createMainscreen());
+  });
+};
+
+export const addProfileListeners = () => {
+  const exitBtn = document.querySelector('.profile-logout');
+  const main = document.querySelector('.main');
+  exitBtn.addEventListener('click', () => {
+    localStorage.clear();
+    main.innerHTML = '';
+    main.append(createMainscreen());
+  });
 };
 
 export const addHeaderListeners = async () => {
@@ -123,15 +150,19 @@ export const addHeaderListeners = async () => {
   authorisationButton.addEventListener('click', () => {
     const isAutorised = Boolean(localStorage.getItem('login'));
     let authorisationBlock: Element;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    let addListeners: Function;
 
     if (isAutorised) {
       authorisationBlock = createProfile();
+      addListeners = addProfileListeners;
     } else {
       authorisationBlock = createAuthorisation();
+      addListeners = addAuthorisationListeners;
     }
 
     main.innerHTML = '';
     main.append(authorisationBlock);
-    addAuthorisationListeners();
+    addListeners();
   });
 };

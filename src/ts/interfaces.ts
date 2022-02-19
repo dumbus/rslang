@@ -18,3 +18,26 @@ export interface IDescriptGame {
   title: string;
   text: string;
 }
+
+export interface IWordOptional {
+  wordID: string;
+  correctAnswers: number;
+}
+
+export interface IWordStatistics {
+  difficulty: string;
+  optional: IWordOptional;
+}
+
+export type ResultGame = {
+  wordID: string;
+  correct: boolean;
+}[];
+
+export interface ISignIn {
+  message: string;
+  token: string;
+  refreshToken: string;
+  userId: string;
+  name: string;
+}
