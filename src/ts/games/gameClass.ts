@@ -1,8 +1,15 @@
-import { BASE, getWords, getWordsAllGroup } from '../api';
-import { IDescriptGame, IWord, ResultGame } from '../interfaces';
+import {
+  BASE,
+  getWords,
+  getWordsAllGroup,
+  getUserWords,
+  getUserWordById,
+  updateUserWord,
+  createUserWord
+} from '../api';
+import { IDescriptGame, IWord, ResultGame, ISignIn } from '../interfaces';
 import { shuffle, randomInteger, randomNoRepeatNum, randomArrNum } from '../utils';
 import { createMainscreen } from '../modules/mainscreen';
-import UserWords from '../modules/statistics';
 
 const SPRINT_DESCRIPTION = {
   title: 'Спринт',
@@ -95,7 +102,12 @@ export default class Game {
     return items;
   }
 
-  private pushResult(answers: { correct: number[]; wrong: number[] }) {
+  private async pushResult(answers: { correct: number[]; wrong: number[] }) {
+    const userInfo: ISignIn = JSON.parse(localStorage.getItem('user'));
+    const userID = userInfo.userId;
+    const token = userInfo.token;
+    const allWords = await getUserWords(userID, token);
+    const allWordsID = allWords.map((item) => item.optional.wordID);
     const result: ResultGame = [];
     answers.correct.forEach((i) => {
       result.push({ wordID: this.words[i].id, correct: true });
@@ -103,7 +115,34 @@ export default class Game {
     answers.wrong.forEach((i) => {
       result.push({ wordID: this.words[i].id, correct: false });
     });
-    UserWords.inst.parseResultGame(result);
+    result.forEach(async (item) => {
+      if (allWordsID.includes(item.wordID)) {
+        const word = await getUserWordById(userID, item.wordID, token);
+        if (item.correct) {
+          if (word.difficulty === 'new') {
+            word.optional.correctAnswers += 1;
+            if (word.optional.correctAnswers === 3) word.difficulty = 'done';
+          }
+          if (word.difficulty === 'difficult') {
+            word.optional.correctAnswers += 1;
+            if (word.optional.correctAnswers === 5) word.difficulty = 'done';
+          }
+        } else {
+          word.optional.correctAnswers = 0;
+          word.difficulty = word.difficulty === 'difficult' ? 'difficult' : 'new';
+        }
+        updateUserWord(userID, item.wordID, word, token);
+      } else {
+        const body = {
+          difficulty: 'new',
+          optional: {
+            wordID: item.wordID,
+            correctAnswers: item.correct ? 1 : 0
+          }
+        };
+        createUserWord(userID, item.wordID, body, token);
+      }
+    });
   }
 
   private finishGame() {
@@ -150,6 +189,8 @@ export default class Game {
       this.root.append(createMainscreen());
     });
     this.section.append(element);
+    const isAutorised = Boolean(localStorage.getItem('login'));
+    if (isAutorised) this.pushResult(this.answers);
   }
 
   private toggleMute() {

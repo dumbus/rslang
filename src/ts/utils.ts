@@ -44,7 +44,3 @@ export const addLoader = () => {
 
   main.append(overlay);
 };
-
-export const changeAuthorisationState = () => {
-  
-};

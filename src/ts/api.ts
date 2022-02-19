@@ -114,4 +114,5 @@ export const signIn = async (email: string, password: string) => {
   }
   const result: ISignIn = await res.json();
   localStorage.setItem('user', JSON.stringify(result));
+  localStorage.setItem('login', '+');
 };
