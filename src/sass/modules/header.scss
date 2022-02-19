@@ -19,5 +19,8 @@
     display: flex;
     column-gap: 10px;
     margin-left: 40px;
+    &-authorisation {
+      background-color: $light-green;
+    }
   }
 }

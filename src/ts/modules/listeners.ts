@@ -3,6 +3,7 @@ import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
 import { addLoader } from '../utils';
+import { createAuthorisation, createProfile } from './renderPage';
 
 const addTextbookListeners = async () => {
   const main = document.querySelector('.main');
@@ -56,11 +57,33 @@ const addTextbookListeners = async () => {
   });
 };
 
+export const addAuthorisationListeners = () => {
+  const changeAuthorisationStateButton = document.querySelector('.authorisation-modal-state');
+  let authorisationState = sessionStorage.getItem('authorisation-state');
+
+  const main = document.querySelector('.main');
+
+  changeAuthorisationStateButton.addEventListener('click', () => {
+    if (authorisationState === 'registration') {
+      authorisationState = 'login';
+    } else {
+      authorisationState = 'registration';
+    }
+
+    sessionStorage.setItem('authorisation-state', authorisationState);
+    const authorisationContent = createAuthorisation();
+    main.innerHTML = '';
+    main.append(authorisationContent);
+    addAuthorisationListeners();
+  });
+};
+
 export const addHeaderListeners = async () => {
   const mainscreenButton = document.querySelector('.header-home');
   const textbookButton = document.querySelector('.header-nav-textbook');
   const sprintButton = document.querySelector('.header-nav-sprint');
   const audiocallButton = document.querySelector('.header-nav-audio');
+  const authorisationButton = document.querySelector('.header-nav-authorisation');
 
   const main = document.querySelector('.main');
 
@@ -95,5 +118,20 @@ export const addHeaderListeners = async () => {
     } else {
       Game.inst.startPage();
     }
+  });
+
+  authorisationButton.addEventListener('click', () => {
+    const isAutorised = Boolean(localStorage.getItem('login'));
+    let authorisationBlock: Element;
+
+    if (isAutorised) {
+      authorisationBlock = createProfile();
+    } else {
+      authorisationBlock = createAuthorisation();
+    }
+
+    main.innerHTML = '';
+    main.append(authorisationBlock);
+    addAuthorisationListeners();
   });
 };
