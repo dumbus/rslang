@@ -60,11 +60,30 @@ export const createAuthorisation = () => {
         <div class="authorisation-modal-divider"></div>
         <div class="authorisation-modal-state button">Регистрация</div>
       </div>
-      <div class="authorisation-modal-logout button">Выйти</div>
     </div>
   `;
 
   return authorisationBlock;
+};
+
+export const createProfile = () => {
+  const profileBlock = document.createElement('div');
+  profileBlock.classList.add('profile');
+
+  profileBlock.innerHTML = `
+    <div class="profile-text">
+      <h1 class="profile-title">Здравствуйте!</h1>
+      <h2 class="profile-subtitle">Теперь для Вас доступны новые активности:</h2>
+      <ul class="profile-list">
+        <li class="profile-list-item">Статистика</li>
+        <li class="profile-list-item">Раздел "Сложные слова"</li>
+        <li class="profile-list-item">Изученные слова</li>
+      </ul>
+    </div>
+    <div class="profile-logout button">Выйти</div>
+  `;
+
+  return profileBlock;
 };
 
 export const renderPage = async () => {

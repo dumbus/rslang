@@ -3,7 +3,7 @@ import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
 import { addLoader } from '../utils';
-import { createAuthorisation } from './renderPage';
+import { createAuthorisation, createProfile } from './renderPage';
 
 const addTextbookListeners = async () => {
   const main = document.querySelector('.main');
@@ -100,7 +100,14 @@ export const addHeaderListeners = async () => {
   });
 
   authorisationButton.addEventListener('click', () => {
-    const authorisationBlock = createAuthorisation();
+    const isAutorised = Boolean(localStorage.getItem('login'));
+    let authorisationBlock: Element;
+
+    if (isAutorised) {
+      authorisationBlock = createProfile();
+    } else {
+      authorisationBlock = createAuthorisation();
+    }
 
     main.innerHTML = '';
     main.append(authorisationBlock);
