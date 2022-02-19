@@ -12,6 +12,7 @@ const createHeader = () => {
       <div class="header-nav-stats button">Статистика</div>
       <div class="header-nav-audio button">Аудиовызов</div>
       <div class="header-nav-sprint button">Спринт</div>
+      <div class="header-nav-authorisation button">Авторизация</div>
     </nav>
   `;
 
@@ -33,6 +34,13 @@ const createFooter = () => {
   return footerBlock;
 };
 
+const authorisation = () => {
+  const authorisationBlock = document.createElement('div');
+  authorisationBlock.classList.add('authorisation');
+
+  // authorisationBlock
+};
+
 export const renderPage = async () => {
   const container = document.querySelector('.container');
   const main = document.querySelector('.main');
@@ -44,7 +52,7 @@ export const renderPage = async () => {
 
   container.prepend(headerBlock);
   container.append(footerBlock);
-  main.append(mainscreenBlock);
+  // main.append(mainscreenBlock);
 
   addHeaderListeners();
 };

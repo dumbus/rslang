@@ -15,6 +15,31 @@
 <body>
   <div class="container">
     <main class="main">
+      <div class="authorisation">
+        <div class="authorisation-text">
+          <h1 class="authorisation-text-title">Готовы расширить Ваши возможности?</h1>
+          <h2 class="authorisation-text-subtitle">При авторизации для Вас станут доступны новые активности:</h2>
+          <ul class="authorisation-text-list">
+            <li class="authorisation-text-list-item">Статистика</li>
+            <li class="authorisation-text-list-item">Раздел "Сложные слова"</li>
+            <li class="authorisation-text-list-item">Изученные слова</li>
+          </ul>
+        </div>
+        <div class="authorisation-modal-container">
+          <div class="authorisation-modal">
+            <div class="authorisation-modal-title">Войти</div>
+            <form class="authorisation-modal-form">
+              <input type="text" class="authorisation-modal-form-name authorisation-modal-form-input" placeholder="Имя (3 знака минимум)" minlength="3" required>
+              <input type="email" class="authorisation-modal-form-email authorisation-modal-form-input" placeholder="Электронная почта" required>
+              <input type="password" class="authorisation-modal-form-password authorisation-modal-form-input" placeholder="Пароль" minlength="8" required>
+              <button type="submit" class="authorisation-modal-form-submit button">Вход</button>
+            </form>
+            <div class="authorisation-modal-divider"></div>
+            <div class="authorisation-modal-state button">Регистрация</div>
+          </div>
+          <div class="authorisation-modal-logout button">Выйти</div>
+        </div>
+      </div>
     </main>
   </div>
 

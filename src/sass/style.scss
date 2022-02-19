@@ -120,7 +120,7 @@ ul {
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 60px);
   background-color: #FFF;
 }
 
@@ -132,6 +132,7 @@ ul {
 @import "./modules/mainscreen.scss";
 @import "./modules/game.scss";
 @import "./modules/textbook.scss";
+@import "./modules/authorisation.scss";
 @import "./modules/footer.scss";
 @import "./modules/loader.scss";
 @import "./modules/media.scss";
