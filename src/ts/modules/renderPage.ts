@@ -34,7 +34,44 @@ const createFooter = () => {
   return footerBlock;
 };
 
+const createAuthorisationModal = (authorisationState: string) => {
+  const authorisationModal = document.createElement('div');
+  authorisationModal.classList.add('authorisation-modal');
+
+  if (authorisationState === 'registration') {
+    authorisationModal.innerHTML = `
+    <div class="authorisation-modal-title">Регистрация</div>
+      <form class="authorisation-modal-form">
+        <input type="text" class="authorisation-modal-form-name authorisation-modal-form-input" placeholder="Имя (3 знака минимум)" minlength="3" required>
+        <input type="email" class="authorisation-modal-form-email authorisation-modal-form-input" placeholder="Электронная почта" required>
+        <input type="password" class="authorisation-modal-form-password authorisation-modal-form-input" placeholder="Пароль" minlength="8" required>
+        <button type="submit" class="authorisation-modal-form-submit button">Регистрация</button>
+      </form>
+      <div class="authorisation-modal-divider"></div>
+    <div class="authorisation-modal-state button">Вход</div>
+  `;
+  } else {
+    authorisationModal.innerHTML = `
+    <div class="authorisation-modal-title">Вход</div>
+      <form class="authorisation-modal-form">
+        <input type="email" class="authorisation-modal-form-email authorisation-modal-form-input" placeholder="Электронная почта" required>
+        <input type="password" class="authorisation-modal-form-password authorisation-modal-form-input" placeholder="Пароль" minlength="8" required>
+        <button type="submit" class="authorisation-modal-form-submit button">Вход</button>
+      </form>
+      <div class="authorisation-modal-divider"></div>
+    <div class="authorisation-modal-state button">Регистрация</div>
+  `;
+  }
+
+  return authorisationModal;
+};
+
 export const createAuthorisation = () => {
+  let authorisationState = sessionStorage.getItem('authorisation-state');
+  if (authorisationState === null) {
+    authorisationState = 'registration';
+    sessionStorage.setItem('authorisation-state', authorisationState);
+  }
   const authorisationBlock = document.createElement('div');
   authorisationBlock.classList.add('authorisation');
 
@@ -49,19 +86,11 @@ export const createAuthorisation = () => {
       </ul>
     </div>
     <div class="authorisation-modal-container">
-      <div class="authorisation-modal">
-        <div class="authorisation-modal-title">Войти</div>
-        <form class="authorisation-modal-form">
-          <input type="text" class="authorisation-modal-form-name authorisation-modal-form-input" placeholder="Имя (3 знака минимум)" minlength="3" required>
-          <input type="email" class="authorisation-modal-form-email authorisation-modal-form-input" placeholder="Электронная почта" required>
-          <input type="password" class="authorisation-modal-form-password authorisation-modal-form-input" placeholder="Пароль" minlength="8" required>
-          <button type="submit" class="authorisation-modal-form-submit button">Вход</button>
-        </form>
-        <div class="authorisation-modal-divider"></div>
-        <div class="authorisation-modal-state button">Регистрация</div>
-      </div>
+      
     </div>
   `;
+  const authorisationModalBlock = createAuthorisationModal(authorisationState);
+  authorisationBlock.querySelector('.authorisation-modal-container').append(authorisationModalBlock);
 
   return authorisationBlock;
 };

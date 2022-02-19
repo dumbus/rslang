@@ -57,6 +57,27 @@ const addTextbookListeners = async () => {
   });
 };
 
+export const addAuthorisationListeners = () => {
+  const changeAuthorisationStateButton = document.querySelector('.authorisation-modal-state');
+  let authorisationState = sessionStorage.getItem('authorisation-state');
+
+  const main = document.querySelector('.main');
+
+  changeAuthorisationStateButton.addEventListener('click', () => {
+    if (authorisationState === 'registration') {
+      authorisationState = 'login';
+    } else {
+      authorisationState = 'registration';
+    }
+
+    sessionStorage.setItem('authorisation-state', authorisationState);
+    const authorisationContent = createAuthorisation();
+    main.innerHTML = '';
+    main.append(authorisationContent);
+    addAuthorisationListeners();
+  });
+};
+
 export const addHeaderListeners = async () => {
   const mainscreenButton = document.querySelector('.header-home');
   const textbookButton = document.querySelector('.header-nav-textbook');
@@ -111,5 +132,6 @@ export const addHeaderListeners = async () => {
 
     main.innerHTML = '';
     main.append(authorisationBlock);
+    addAuthorisationListeners();
   });
 };
