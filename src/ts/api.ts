@@ -175,7 +175,7 @@ export const getUserStatistics = async (id: string, token: string) => {
     const result = await res.json();
     delete result.id;
     stat = result;
-    if (stat.optional.date !== new Date().getDay()) {
+    if (stat.optional.date !== new Date().getDate()) {
       stat = DEFAULT_STAT;
     }
   }

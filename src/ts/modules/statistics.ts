@@ -26,7 +26,7 @@ export const createStatistic = (stat: IUserStatistics) => {
         </div>
       </div>
       <div class="statistics__words">
-        <h3 class="statistics__words-title">Общая статистика</h3>
+        <h3 class="statistics__words-title">Общая статистика за день</h3>
         <p class="statistics__words-text">Количество новых слов <span>${stat.optional.totalNewWord}</span></p>
         <p class="statistics__words-text">Количество изученных слов <span>${stat.learnedWords}</span></p>
         <p class="statistics__words-text">Процент правильных ответов <span>${stat.optional.totalPercent}%</span></p>
