@@ -79,8 +79,10 @@ export const makeWordDifficult = async (currentWordId: string, difficulty: strin
 
     await updateUserWord(userId, currentWordId, body, token);
     if (body.optional.correctAnswers !== 0) {
+      currentWordBlock.classList.remove('textbook-word-incorrect');
       currentWordBlock.classList.add('textbook-word-correct');
     } else {
+      currentWordBlock.classList.remove('textbook-word-correct');
       currentWordBlock.classList.add('textbook-word-incorrect');
     }
   } else {
@@ -92,6 +94,7 @@ export const makeWordDifficult = async (currentWordId: string, difficulty: strin
       }
     };
     await createUserWord(userId, currentWordId, body, token);
+    currentWordBlock.classList.remove('textbook-word-correct');
     currentWordBlock.classList.add('textbook-word-incorrect');
   }
 
@@ -108,6 +111,7 @@ export const makeWordLearned = async (currentWordId: string, difficulty: string)
   if (difficulty !== 'none') {
     body = await getUserWordById(userId, currentWordId, token);
     body.difficulty = 'done';
+    body.optional.correctAnswers = 1;
 
     await updateUserWord(userId, currentWordId, body, token);
   } else {
@@ -122,6 +126,7 @@ export const makeWordLearned = async (currentWordId: string, difficulty: string)
   }
 
   const currentWordBlock = document.querySelector(`#word-${currentWordId}`);
+  currentWordBlock.classList.remove('textbook-word-incorrect');
   currentWordBlock.classList.add('textbook-word-correct');
   const currentWordLabels = currentWordBlock.querySelector('.textbook-word-content-labels');
   currentWordLabels.innerHTML = '';
