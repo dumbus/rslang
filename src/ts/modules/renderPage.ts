@@ -98,10 +98,11 @@ export const createAuthorisation = () => {
 export const createProfile = () => {
   const profileBlock = document.createElement('div');
   profileBlock.classList.add('profile');
+  const user = JSON.parse(localStorage.getItem('user'));
 
   profileBlock.innerHTML = `
     <div class="profile-text">
-      <h1 class="profile-title">Здравствуйте!</h1>
+      <h1 class="profile-title">Здравствуйте, ${user.name}!</h1>
       <h2 class="profile-subtitle">Теперь для Вас доступны новые активности:</h2>
       <ul class="profile-list">
         <li class="profile-list-item">Статистика</li>
