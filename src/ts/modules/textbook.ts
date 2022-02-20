@@ -127,8 +127,7 @@ export const playAudio = (audioBtn: Element) => {
 };
 
 const createWords = async (group: number, page: number) => {
-  const userData = JSON.parse(localStorage.getItem('user'));
-  const { userId, token } = userData;
+  const isAuthorized = Boolean(localStorage.getItem('login'));
   const wordsBlock = document.createElement('div');
   wordsBlock.classList.add('textbook-words');
 
@@ -136,52 +135,62 @@ const createWords = async (group: number, page: number) => {
   const userWordsDifficulties: string[] = [];
   const userWordsAnswers: number[] = [];
 
-  if (group === 6) {
-    const userResponse = await getUserWords(userId, token);
-    const difficultWords: IWordStatistics[] = [];
+  if (isAuthorized) {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    const { userId, token } = userData;
+    if (group === 6) {
+      const userResponse = await getUserWords(userId, token);
+      const difficultWords: IWordStatistics[] = [];
 
-    userResponse.forEach((word) => {
-      if (word.difficulty === 'difficult') {
-        difficultWords.push(word);
+      userResponse.forEach((word) => {
+        if (word.difficulty === 'difficult') {
+          difficultWords.push(word);
+        }
+      });
+
+      if (difficultWords.length === 0) {
+        const noneWordsBlock = document.createElement('div');
+        noneWordsBlock.classList.add('textbook-words-none');
+        noneWordsBlock.textContent = 'Вы ещё не добавили слова в раздел сложных...';
+        wordsBlock.append(noneWordsBlock);
       }
-    });
 
-    if (difficultWords.length === 0) {
-      const noneWordsBlock = document.createElement('div');
-      noneWordsBlock.classList.add('textbook-words-none');
-      noneWordsBlock.textContent = 'Вы ещё не добавили слова в раздел сложных...';
-      wordsBlock.append(noneWordsBlock);
-    }
+      for (const difficultWordData of difficultWords) {
+        const wordData = await getWord(difficultWordData.optional.wordID);
+        const wordBlock = createWord(wordData, 'difficult', difficultWordData.optional.correctAnswers, true);
+        wordsBlock.append(wordBlock);
+      }
+    } else {
+      const usualResponse = await getWords(group, page);
+      const userResponse = await getUserWords(userId, token);
 
-    for (const difficultWordData of difficultWords) {
-      const wordData = await getWord(difficultWordData.optional.wordID);
-      const wordBlock = createWord(wordData, 'difficult', difficultWordData.optional.correctAnswers, true);
-      wordsBlock.append(wordBlock);
+      userResponse.forEach((userWordData) => {
+        userWordsIds.push(userWordData.optional.wordID);
+        userWordsDifficulties.push(userWordData.difficulty);
+        userWordsAnswers.push(userWordData.optional.correctAnswers);
+      });
+
+      Game.arrWords = usualResponse;
+      Game.textbook = true;
+
+      usualResponse.forEach((word: IWord) => {
+        let wordBlock: HTMLDivElement;
+        const index = userWordsIds.indexOf(word.id);
+
+        if (index !== -1) {
+          wordBlock = createWord(word, userWordsDifficulties[index], userWordsAnswers[index]);
+        } else {
+          wordBlock = createWord(word);
+        }
+
+        wordsBlock.append(wordBlock);
+      });
     }
   } else {
-    const usualResponse = await getWords(group, page);
-    const userResponse = await getUserWords(userId, token);
+    const response = await getWords(group, page);
 
-    userResponse.forEach((userWordData) => {
-      userWordsIds.push(userWordData.optional.wordID);
-      userWordsDifficulties.push(userWordData.difficulty);
-      userWordsAnswers.push(userWordData.optional.correctAnswers);
-    });
-
-    Game.arrWords = usualResponse;
-    Game.textbook = true;
-
-    usualResponse.forEach((word: IWord) => {
-      let wordBlock: HTMLDivElement;
-      const index = userWordsIds.indexOf(word.id);
-
-      if (index !== -1) {
-        wordBlock = createWord(word, userWordsDifficulties[index], userWordsAnswers[index]);
-      } else {
-        wordBlock = createWord(word);
-      }
-
-      wordsBlock.append(wordBlock);
+    response.forEach((word) => {
+      wordsBlock.append(createWord(word));
     });
   }
   return wordsBlock;

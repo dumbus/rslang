@@ -142,6 +142,7 @@ export const addProfileListeners = () => {
   const main = document.querySelector('.main');
   exitBtn.addEventListener('click', () => {
     localStorage.clear();
+    sessionStorage.clear();
     main.innerHTML = '';
     main.append(createMainscreen());
   });
