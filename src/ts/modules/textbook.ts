@@ -1,7 +1,7 @@
 import { IWord } from '../interfaces';
 import { getWords, getUserWords } from '../api';
 import Game from '../games/gameClass';
-import { createDifficultyLabel, createProgressLabel } from '../utils';
+import { createDifficultyLabel } from '../utils';
 
 const base = 'https://rs-lang-bckend.herokuapp.com';
 
@@ -55,10 +55,16 @@ const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1) =
     if (difficulty !== 'none') {
       const labels = document.createElement('div');
       labels.classList.add('textbook-word-content-labels');
+
       if (difficulty !== 'new') {
         labels.append(createDifficultyLabel(difficulty));
       }
-      labels.append(createProgressLabel(correctAnswers));
+
+      if (correctAnswers === 0) {
+        wordBlock.classList.add('textbook-word-incorrect');
+      } else {
+        wordBlock.classList.add('textbook-word-correct');
+      }
       wordContent.prepend(labels);
     }
 

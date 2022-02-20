@@ -41,6 +41,12 @@
     margin: 20px auto 0 auto;
     border: 2px solid $silver;
     border-radius: 10px;
+    &-correct {
+      background-color: $correct;
+    }
+    &-incorrect {
+      background-color: $incorrect;
+    }
     &-img {
       width: 50%;
       border-radius: 10px;
