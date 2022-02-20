@@ -1,4 +1,6 @@
-import { ISignIn, IWord, IWordStatistics } from './interfaces';
+import { DEFAULT_STAT, ISignIn, IUserStatistics, IWord, IWordStatistics } from './interfaces';
+import { addAuthorisationListeners } from './modules/listeners';
+import { createAuthorisation } from './modules/renderPage';
 
 export const BASE = 'https://rs-lang-bckend.herokuapp.com/';
 const WORDS = `${BASE}words`;
@@ -23,6 +25,15 @@ export async function getWordsAllGroup(group = '0') {
   return result;
 }
 
+const logout = () => {
+  localStorage.removeItem('login');
+  sessionStorage.setItem('authorisation-state', 'login');
+  const main = document.querySelector('.main');
+  main.innerHTML = '';
+  main.append(createAuthorisation());
+  addAuthorisationListeners();
+};
+
 export const getUserWords = async (id: string, token: string) => {
   const res = await fetch(`${BASE}users/${id}/words`, {
     method: 'GET',
@@ -30,8 +41,9 @@ export const getUserWords = async (id: string, token: string) => {
       Authorization: `Bearer ${token}`
     }
   });
-  if (res.status === 402) {
-    console.log('login');
+  if (res.status === 401) {
+    logout();
+    throw new Error('Sign In');
   }
   const arr: IWordStatistics[] = await res.json();
   return arr;
@@ -45,9 +57,13 @@ export const getUserWordById = async (id: string, wordID: string, token: string)
     }
   });
   if (res.status === 401) {
-    console.log('login');
+    logout();
+    throw new Error('Sign In');
   }
-  const result: IWordStatistics = await res.json();
+  const resu = await res.json();
+  delete resu.id;
+  delete resu.wordId;
+  const result: IWordStatistics = resu;
   return result;
 };
 
@@ -61,7 +77,8 @@ export const createUserWord = async (id: string, wordID: string, body: IWordStat
     }
   });
   if (res.status === 401) {
-    console.log('login');
+    logout();
+    throw new Error('Sign In');
   }
 };
 
@@ -75,7 +92,8 @@ export const updateUserWord = async (id: string, wordID: string, body: IWordStat
     }
   });
   if (res.status === 401) {
-    console.log('login');
+    logout();
+    throw new Error('Sign In');
   }
 };
 
@@ -97,6 +115,16 @@ export const createUser = async (name: string, email: string, password: string) 
   }
 };
 
+const addWrongMessage = (text: string) => {
+  const message = document.createElement('p');
+  message.textContent = text;
+  message.style.color = 'red';
+  document.querySelector('.authorisation-modal-form').prepend(message);
+  setTimeout(() => {
+    message.remove();
+  }, 2000);
+};
+
 export const signIn = async (email: string, password: string) => {
   const body = {
     email: email,
@@ -110,9 +138,61 @@ export const signIn = async (email: string, password: string) => {
     }
   });
   if (res.status === 403) {
-    console.log('Incorrect e-mail or password');
+    addWrongMessage('Не корректный e-mail или пароль');
+    throw new Error('Incorrect e-mail or password');
+  }
+  if (res.status === 404) {
+    addWrongMessage('Пользователь не найден');
+    throw new Error('Not found');
   }
   const result: ISignIn = await res.json();
   localStorage.setItem('user', JSON.stringify(result));
   localStorage.setItem('login', '+');
+};
+
+export const checkLogin = () => {
+  if (localStorage.getItem('login') === '+') {
+    const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+    getUserWords(user.userId, user.token);
+  }
+};
+
+export const getUserStatistics = async (id: string, token: string) => {
+  const res = await fetch(`${BASE}users/${id}/statistics`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  if (res.status === 401) {
+    logout();
+    throw new Error('Sign In');
+  }
+  let stat: IUserStatistics;
+  if (res.status === 404) {
+    stat = DEFAULT_STAT;
+  } else {
+    const result = await res.json();
+    delete result.id;
+    stat = result;
+    if (stat.optional.date !== new Date().getDay()) {
+      stat = DEFAULT_STAT;
+    }
+  }
+  return stat;
+};
+
+export const updateUserStatistics = async (id: string, token: string, body: IUserStatistics) => {
+  const res = await fetch(`${BASE}users/${id}/statistics`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(body)
+  });
+  if (res.status === 401) {
+    logout();
+    throw new Error('Sign In');
+  }
 };
