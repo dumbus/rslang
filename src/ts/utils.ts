@@ -145,3 +145,27 @@ export const makeWordNew = async (currentWordId: string) => {
   const currentWordBlock = document.querySelector(`#word-${currentWordId}`);
   currentWordBlock.remove();
 };
+
+export const disableButtonsForLearnedPages = () => {
+  const isAuthorized = Boolean(localStorage.getItem('login'));
+  const audioBtn = <HTMLButtonElement>document.querySelector('.header-nav-audio');
+  const sprintBtn = <HTMLButtonElement>document.querySelector('.header-nav-sprint');
+  if (isAuthorized) {
+    const learnedWords = document.querySelectorAll(".textbook-word[data-difficulty='done']");
+    const difficultWords = document.querySelectorAll(".textbook-word[data-difficulty='difficult']");
+    const sumOfLearnedWords = learnedWords.length + difficultWords.length;
+
+    if (sumOfLearnedWords === 20) {
+      const pageSubtitle = document.querySelector('.textbook-subtitle');
+      pageSubtitle.textContent += ' - Изучена полностью!';
+      audioBtn.disabled = true;
+      sprintBtn.disabled = true;
+    } else {
+      audioBtn.disabled = false;
+      sprintBtn.disabled = false;
+    }
+  } else {
+    audioBtn.disabled = false;
+    sprintBtn.disabled = false;
+  }
+};

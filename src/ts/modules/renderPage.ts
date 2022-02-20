@@ -10,8 +10,8 @@ const createHeader = () => {
     <nav class="header-nav">
       <div class="header-nav-textbook button">Учебник</div>
       <div class="header-nav-stats button">Статистика</div>
-      <div class="header-nav-audio button">Аудиовызов</div>
-      <div class="header-nav-sprint button">Спринт</div>
+      <button class="header-nav-audio button">Аудиовызов</button>
+      <button class="header-nav-sprint button">Спринт</button>
       <div class="header-nav-authorisation button">Авторизация</div>
     </nav>
   `;

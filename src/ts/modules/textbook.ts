@@ -5,8 +5,9 @@ import { createDifficultyLabel } from '../utils';
 
 const base = 'https://rs-lang-bckend.herokuapp.com';
 
-const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1, isForDifficult = false) => {
+const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1) => {
   const isAuthorized = Boolean(localStorage.getItem('login'));
+  const group = Number(sessionStorage.getItem('rs-group'));
   const wordBlock = document.createElement('div');
   wordBlock.classList.add('textbook-word');
   wordBlock.setAttribute('id', `word-${wordData.id}`);
@@ -42,6 +43,7 @@ const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1, i
     </div>
   `;
 
+  wordBlock.setAttribute('data-difficulty', difficulty);
   const wordContent = wordBlock.querySelector('.textbook-word-content');
 
   if (isAuthorized) {
@@ -86,13 +88,13 @@ const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1, i
       } else {
         wordBlock.classList.add('textbook-word-correct');
       }
+    }
 
-      if (isForDifficult === true) {
-        difficultButton.style.display = 'none';
-        learnedButton.style.display = 'none';
-      } else {
-        removeButton.style.display = 'none';
-      }
+    if (group === 6) {
+      difficultButton.style.display = 'none';
+      learnedButton.style.display = 'none';
+    } else {
+      removeButton.style.display = 'none';
     }
 
     wordContent.prepend(labels);
@@ -157,7 +159,7 @@ const createWords = async (group: number, page: number) => {
 
       for (const difficultWordData of difficultWords) {
         const wordData = await getWord(difficultWordData.optional.wordID);
-        const wordBlock = createWord(wordData, 'difficult', difficultWordData.optional.correctAnswers, true);
+        const wordBlock = createWord(wordData, 'difficult', difficultWordData.optional.correctAnswers);
         wordsBlock.append(wordBlock);
       }
     } else {
@@ -220,15 +222,6 @@ export const createTextbook = async (group = 0, page = 0) => {
     </nav>
   `;
 
-  if (isAuthorized) {
-    const textbookNavigation = textbookBlock.querySelector('.textbook-nav');
-    const textbookNavigationDifficult = document.createElement('div');
-    textbookNavigationDifficult.classList.add('textbook-nav-item');
-    textbookNavigationDifficult.setAttribute('data-num', String(6));
-    textbookNavigationDifficult.textContent = 'Сложные слова';
-    textbookNavigation.append(textbookNavigationDifficult);
-  }
-
   if (group === 6) {
     const pagesBtns = <HTMLElement>textbookBlock.querySelector('.textbook-pages');
     const pageSubtitle = <HTMLElement>textbookBlock.querySelector('.textbook-subtitle');
@@ -241,6 +234,15 @@ export const createTextbook = async (group = 0, page = 0) => {
 
   const wordsBlock = await createWords(group, page);
   textbookBlock.append(wordsBlock);
+
+  if (isAuthorized) {
+    const textbookNavigation = textbookBlock.querySelector('.textbook-nav');
+    const textbookNavigationDifficult = document.createElement('div');
+    textbookNavigationDifficult.classList.add('textbook-nav-item');
+    textbookNavigationDifficult.setAttribute('data-num', String(6));
+    textbookNavigationDifficult.textContent = 'Сложные слова';
+    textbookNavigation.append(textbookNavigationDifficult);
+  }
 
   textbookBlock.querySelectorAll('.button').forEach((button) => {
     button.classList.add(`button-${group + 1}`);

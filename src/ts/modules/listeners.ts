@@ -2,7 +2,7 @@ import Game from '../games/gameClass';
 import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
-import { addLoader, makeWordDifficult, makeWordLearned, makeWordNew } from '../utils';
+import { addLoader, makeWordDifficult, makeWordLearned, makeWordNew, disableButtonsForLearnedPages } from '../utils';
 import { createAuthorisation, createProfile } from './renderPage';
 import { createUser, getUserStatistics, signIn } from '../api';
 import { ISignIn, IUserStatistics } from '../interfaces';
@@ -76,6 +76,7 @@ const addTextbookListeners = async () => {
         currentButton.disabled = true;
         const currentLearnedButton = <HTMLButtonElement>document.querySelector(`#learned-${currentWordId}`);
         currentLearnedButton.disabled = false;
+        disableButtonsForLearnedPages();
       });
     });
 
@@ -88,6 +89,7 @@ const addTextbookListeners = async () => {
         currentButton.disabled = true;
         const currentDifficultButton = <HTMLButtonElement>document.querySelector(`#difficult-${currentWordId}`);
         currentDifficultButton.disabled = false;
+        disableButtonsForLearnedPages();
       });
     });
 
@@ -98,6 +100,8 @@ const addTextbookListeners = async () => {
       });
     });
   }
+
+  disableButtonsForLearnedPages();
 };
 
 export const addAuthorisationListeners = () => {
