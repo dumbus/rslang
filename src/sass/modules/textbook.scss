@@ -71,6 +71,22 @@
           height: 100%;
         }
       }
+      &-btns {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        &-item {
+          width: 48%;
+        }
+      }
+      &-labels {
+        display: flex;
+        width: 100%;
+        column-gap: 10px;
+        &-item {
+          width: 33%;
+        }
+      }
     }
   }
 }

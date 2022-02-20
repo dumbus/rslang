@@ -5,6 +5,7 @@ import Game from '../games/gameClass';
 const base = 'https://rs-lang-bckend.herokuapp.com';
 
 const createWord = (wordData: IWord) => {
+  const isAuthorized = Boolean(localStorage.getItem('login'));
   const wordBlock = document.createElement('div');
   wordBlock.classList.add('textbook-word');
 
@@ -38,6 +39,28 @@ const createWord = (wordData: IWord) => {
       </div>
     </div>
   `;
+
+  const wordContent = wordBlock.querySelector('.textbook-word-content');
+
+  if (isAuthorized) {
+    const buttons = document.createElement('div');
+    buttons.classList.add('textbook-word-content-btns');
+    const labels = document.createElement('div');
+    labels.classList.add('textbook-word-content-labels');
+
+    buttons.innerHTML = `
+      <div class="textbook-word-content-btns-item textbook-word-content-btns-difficult button">Сложное слово</div>
+      <div class="textbook-word-content-btns-item textbook-word-content-btns-learned button">Изученное слово</div>
+    `;
+
+    labels.innerHTML = `
+      <div class="textbook-word-content-labels-item label label-difficult">Сложное</div>
+      <div class="textbook-word-content-labels-item label label-learned">Изученное</div>
+    `;
+
+    wordContent.append(buttons);
+    wordContent.prepend(labels);
+  }
 
   return wordBlock;
 };
