@@ -67,12 +67,13 @@ export const createDifficultyLabel = (difficulty: string) => {
 export const createProgressLabel = (answers: number) => {
   const label = document.createElement('div');
   label.classList.add('label');
-  label.textContent = `Верных ответов: ${answers}`;
 
   if (answers !== 0) {
     label.classList.add('label-learned');
+    label.textContent = 'Верно';
   } else {
     label.classList.add('label-difficult');
+    label.textContent = 'Неверно';
   }
 
   return label;
