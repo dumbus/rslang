@@ -43,7 +43,7 @@ const createAuthorisationModal = (authorisationState: string) => {
     <div class="authorisation-modal-title">Регистрация</div>
       <form class="authorisation-modal-form">
         <input type="text" class="authorisation-modal-form-name authorisation-modal-form-input" placeholder="Имя (3 знака минимум)" minlength="3" required>
-        <input type="email" class="authorisation-modal-form-email authorisation-modal-form-input" placeholder="Электронная почта" required>
+        <input type="email" class="authorisation-modal-form-email authorisation-modal-form-input" placeholder="Электронная почта" required autocomplete="email">
         <input type="password" class="authorisation-modal-form-password authorisation-modal-form-input" placeholder="Пароль" minlength="8" required>
         <button type="submit" class="authorisation-modal-form-submit button">Регистрация</button>
       </form>
