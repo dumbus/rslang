@@ -44,3 +44,36 @@ export const addLoader = () => {
 
   main.append(overlay);
 };
+
+export const createDifficultyLabel = (difficulty: string) => {
+  const label = document.createElement('div');
+  label.classList.add('textbook-word-content-labels-item');
+  label.classList.add('label');
+
+  switch (difficulty) {
+    case 'difficult':
+      label.classList.add('label-difficult');
+      label.textContent = 'Сложное';
+      break;
+    case 'done':
+      label.classList.add('label-learned');
+      label.textContent = 'Изученное';
+      break;
+  }
+
+  return label;
+};
+
+export const createProgressLabel = (answers: number) => {
+  const label = document.createElement('div');
+  label.classList.add('label');
+  label.textContent = `Верных ответов: ${answers}`;
+
+  if (answers !== 0) {
+    label.classList.add('label-learned');
+  } else {
+    label.classList.add('label-difficult');
+  }
+
+  return label;
+};

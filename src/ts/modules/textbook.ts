@@ -1,10 +1,11 @@
 import { IWord } from '../interfaces';
-import { getWords } from '../api';
+import { getWords, getUserWords } from '../api';
 import Game from '../games/gameClass';
+import { createDifficultyLabel, createProgressLabel } from '../utils';
 
 const base = 'https://rs-lang-bckend.herokuapp.com';
 
-const createWord = (wordData: IWord) => {
+const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1) => {
   const isAuthorized = Boolean(localStorage.getItem('login'));
   const wordBlock = document.createElement('div');
   wordBlock.classList.add('textbook-word');
@@ -45,21 +46,23 @@ const createWord = (wordData: IWord) => {
   if (isAuthorized) {
     const buttons = document.createElement('div');
     buttons.classList.add('textbook-word-content-btns');
-    const labels = document.createElement('div');
-    labels.classList.add('textbook-word-content-labels');
 
     buttons.innerHTML = `
       <div class="textbook-word-content-btns-item textbook-word-content-btns-difficult button">Сложное слово</div>
       <div class="textbook-word-content-btns-item textbook-word-content-btns-learned button">Изученное слово</div>
     `;
 
-    labels.innerHTML = `
-      <div class="textbook-word-content-labels-item label label-difficult">Сложное</div>
-      <div class="textbook-word-content-labels-item label label-learned">Изученное</div>
-    `;
+    if (difficulty !== 'none') {
+      const labels = document.createElement('div');
+      labels.classList.add('textbook-word-content-labels');
+      if (difficulty !== 'new') {
+        labels.append(createDifficultyLabel(difficulty));
+      }
+      labels.append(createProgressLabel(correctAnswers));
+      wordContent.prepend(labels);
+    }
 
     wordContent.append(buttons);
-    wordContent.prepend(labels);
   }
 
   return wordBlock;
@@ -90,15 +93,38 @@ export const playAudio = (audioBtn: Element) => {
 };
 
 const createWords = async (group: number, page: number) => {
+  const userData = JSON.parse(localStorage.getItem('user'));
+  const { userId, token } = userData;
   const wordsBlock = document.createElement('div');
   wordsBlock.classList.add('.textbook-words');
-  const response = await getWords(group, page);
 
-  Game.arrWords = response;
+  const usualResponse = await getWords(group, page);
+  const userResponse = await getUserWords(userId, token);
+
+  const userWordsIds: string[] = [];
+  const userWordsDifficulties: string[] = [];
+  const userWordsAnswers: number[] = [];
+
+  userResponse.forEach((userWordData) => {
+    userWordsIds.push(userWordData.optional.wordID);
+    userWordsDifficulties.push(userWordData.difficulty);
+    userWordsAnswers.push(userWordData.optional.correctAnswers);
+  });
+
+  Game.arrWords = usualResponse;
   Game.textbook = true;
 
-  response.forEach((word: IWord) => {
-    wordsBlock.append(createWord(word));
+  usualResponse.forEach(async (word: IWord) => {
+    let wordBlock: HTMLDivElement;
+    const index = userWordsIds.indexOf(word.id);
+
+    if (index !== -1) {
+      wordBlock = await createWord(word, userWordsDifficulties[index], userWordsAnswers[index]);
+    } else {
+      wordBlock = await createWord(word);
+    }
+
+    wordsBlock.append(wordBlock);
   });
 
   return wordsBlock;
