@@ -1,3 +1,6 @@
+import { getUserWordById, updateUserWord, createUserWord } from './api';
+import { IWordStatistics } from './interfaces';
+
 export function shuffle(array: unknown[]) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -62,4 +65,65 @@ export const createDifficultyLabel = (difficulty: string) => {
   }
 
   return label;
+};
+
+export const makeWordDifficult = async (currentWordId: string, difficulty: string) => {
+  const userData = JSON.parse(localStorage.getItem('user'));
+  const { userId, token } = userData;
+  let body: IWordStatistics;
+  const currentWordBlock = document.querySelector(`#word-${currentWordId}`);
+
+  if (difficulty !== 'none') {
+    body = await getUserWordById(userId, currentWordId, token);
+    body.difficulty = 'difficult';
+
+    await updateUserWord(userId, currentWordId, body, token);
+    if (body.optional.correctAnswers !== 0) {
+      currentWordBlock.classList.add('textbook-word-correct');
+    } else {
+      currentWordBlock.classList.add('textbook-word-incorrect');
+    }
+  } else {
+    body = {
+      difficulty: 'difficult',
+      optional: {
+        wordID: currentWordId,
+        correctAnswers: 0
+      }
+    };
+    await createUserWord(userId, currentWordId, body, token);
+    currentWordBlock.classList.add('textbook-word-incorrect');
+  }
+
+  const currentWordLabels = currentWordBlock.querySelector('.textbook-word-content-labels');
+  currentWordLabels.innerHTML = '';
+  currentWordLabels.append(createDifficultyLabel('difficult'));
+};
+
+export const makeWordLearned = async (currentWordId: string, difficulty: string) => {
+  const userData = JSON.parse(localStorage.getItem('user'));
+  const { userId, token } = userData;
+  let body: IWordStatistics;
+
+  if (difficulty !== 'none') {
+    body = await getUserWordById(userId, currentWordId, token);
+    body.difficulty = 'done';
+
+    await updateUserWord(userId, currentWordId, body, token);
+  } else {
+    body = {
+      difficulty: 'done',
+      optional: {
+        wordID: currentWordId,
+        correctAnswers: 1
+      }
+    };
+    await createUserWord(userId, currentWordId, body, token);
+  }
+
+  const currentWordBlock = document.querySelector(`#word-${currentWordId}`);
+  currentWordBlock.classList.add('textbook-word-correct');
+  const currentWordLabels = currentWordBlock.querySelector('.textbook-word-content-labels');
+  currentWordLabels.innerHTML = '';
+  currentWordLabels.append(createDifficultyLabel('done'));
 };

@@ -9,6 +9,7 @@ const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1) =
   const isAuthorized = Boolean(localStorage.getItem('login'));
   const wordBlock = document.createElement('div');
   wordBlock.classList.add('textbook-word');
+  wordBlock.setAttribute('id', `word-${wordData.id}`);
 
   const {
     id,
@@ -48,16 +49,32 @@ const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1) =
     buttons.classList.add('textbook-word-content-btns');
 
     buttons.innerHTML = `
-      <div class="textbook-word-content-btns-item textbook-word-content-btns-difficult button">Сложное слово</div>
-      <div class="textbook-word-content-btns-item textbook-word-content-btns-learned button">Изученное слово</div>
+      <button class="textbook-word-content-btns-item textbook-word-content-btns-difficult button">Сложное слово</button>
+      <button class="textbook-word-content-btns-item textbook-word-content-btns-learned button">Изученное слово</button>
     `;
 
-    if (difficulty !== 'none') {
-      const labels = document.createElement('div');
-      labels.classList.add('textbook-word-content-labels');
+    const difficultButton = <HTMLButtonElement>buttons.querySelector('.textbook-word-content-btns-difficult');
+    const learnedButton = <HTMLButtonElement>buttons.querySelector('.textbook-word-content-btns-learned');
 
+    difficultButton.setAttribute('id', `difficult-${wordData.id}`);
+    difficultButton.setAttribute('data-difficulty', difficulty);
+    learnedButton.setAttribute('id', `learned-${wordData.id}`);
+    learnedButton.setAttribute('data-difficulty', difficulty);
+
+    const labels = document.createElement('div');
+    labels.classList.add('textbook-word-content-labels');
+
+    if (difficulty !== 'none') {
       if (difficulty !== 'new') {
         labels.append(createDifficultyLabel(difficulty));
+      }
+
+      if (difficulty === 'difficult') {
+        difficultButton.disabled = true;
+      }
+
+      if (difficulty === 'done') {
+        learnedButton.disabled = true;
       }
 
       if (correctAnswers === 0) {
@@ -65,9 +82,9 @@ const createWord = (wordData: IWord, difficulty = 'none', correctAnswers = -1) =
       } else {
         wordBlock.classList.add('textbook-word-correct');
       }
-      wordContent.prepend(labels);
     }
 
+    wordContent.prepend(labels);
     wordContent.append(buttons);
   }
 

@@ -2,11 +2,12 @@ import Game from '../games/gameClass';
 import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
-import { addLoader } from '../utils';
+import { addLoader, makeWordDifficult, makeWordLearned } from '../utils';
 import { createAuthorisation, createProfile } from './renderPage';
 import { createUser, signIn } from '../api';
 
 const addTextbookListeners = async () => {
+  const isAuthorized = Boolean(localStorage.getItem('login'));
   const main = document.querySelector('.main');
   const textbookAudioBtns = document.querySelectorAll('.textbook-word-content-audiobtn');
   const groupBtns = document.querySelectorAll('.textbook-nav-item');
@@ -56,6 +57,37 @@ const addTextbookListeners = async () => {
     main.append(textbookContent);
     addTextbookListeners();
   });
+
+  if (isAuthorized) {
+    const START_ID_INDEX_FOR_DIFFICULT = 10;
+    const START_ID_INDEX_FOR_LEARNED = 8;
+    const difficultButtons = document.querySelectorAll('.textbook-word-content-btns-difficult');
+    const learnedButtons = document.querySelectorAll('.textbook-word-content-btns-learned');
+
+    difficultButtons.forEach(async (button) => {
+      button.addEventListener('click', async () => {
+        const currentWordId = button.getAttribute('id').slice(START_ID_INDEX_FOR_DIFFICULT);
+        const difficulty = button.getAttribute('data-difficulty');
+        await makeWordDifficult(currentWordId, difficulty);
+        const currentButton = button as HTMLButtonElement;
+        currentButton.disabled = true;
+        const currentLearnedButton = <HTMLButtonElement>document.querySelector(`#learned-${currentWordId}`);
+        currentLearnedButton.disabled = false;
+      });
+    });
+
+    learnedButtons.forEach(async (button) => {
+      button.addEventListener('click', async () => {
+        const currentWordId = button.getAttribute('id').slice(START_ID_INDEX_FOR_LEARNED);
+        const difficulty = button.getAttribute('data-difficulty');
+        await makeWordLearned(currentWordId, difficulty);
+        const currentButton = button as HTMLButtonElement;
+        currentButton.disabled = true;
+        const currentDifficultButton = <HTMLButtonElement>document.querySelector(`#difficult-${currentWordId}`);
+        currentDifficultButton.disabled = false;
+      });
+    });
+  }
 };
 
 export const addAuthorisationListeners = () => {
