@@ -132,3 +132,16 @@ export const makeWordLearned = async (currentWordId: string, difficulty: string)
   currentWordLabels.innerHTML = '';
   currentWordLabels.append(createDifficultyLabel('done'));
 };
+
+export const makeWordNew = async (currentWordId: string) => {
+  const userData = JSON.parse(localStorage.getItem('user'));
+  const { userId, token } = userData;
+
+  const body = await getUserWordById(userId, currentWordId, token);
+  body.difficulty = 'new';
+
+  await updateUserWord(userId, currentWordId, body, token);
+
+  const currentWordBlock = document.querySelector(`#word-${currentWordId}`);
+  currentWordBlock.remove();
+};

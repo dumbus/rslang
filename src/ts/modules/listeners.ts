@@ -2,7 +2,7 @@ import Game from '../games/gameClass';
 import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
-import { addLoader, makeWordDifficult, makeWordLearned } from '../utils';
+import { addLoader, makeWordDifficult, makeWordLearned, makeWordNew } from '../utils';
 import { createAuthorisation, createProfile } from './renderPage';
 import { createUser, getUserStatistics, signIn } from '../api';
 import { ISignIn, IUserStatistics } from '../interfaces';
@@ -65,6 +65,7 @@ const addTextbookListeners = async () => {
     const START_ID_INDEX_FOR_LEARNED = 8;
     const difficultButtons = document.querySelectorAll('.textbook-word-content-btns-difficult');
     const learnedButtons = document.querySelectorAll('.textbook-word-content-btns-learned');
+    const removeButtons = document.querySelectorAll('.textbook-word-content-btns-remove');
 
     difficultButtons.forEach(async (button) => {
       button.addEventListener('click', async () => {
@@ -87,6 +88,13 @@ const addTextbookListeners = async () => {
         currentButton.disabled = true;
         const currentDifficultButton = <HTMLButtonElement>document.querySelector(`#difficult-${currentWordId}`);
         currentDifficultButton.disabled = false;
+      });
+    });
+
+    removeButtons.forEach((button) => {
+      button.addEventListener('click', async () => {
+        const currentWordId = button.getAttribute('id').slice(START_ID_INDEX_FOR_DIFFICULT);
+        await makeWordNew(currentWordId);
       });
     });
   }
