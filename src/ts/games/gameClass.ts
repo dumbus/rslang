@@ -5,7 +5,9 @@ import {
   getUserWords,
   getUserWordById,
   updateUserWord,
-  createUserWord
+  createUserWord,
+  getUserStatistics,
+  updateUserStatistics
 } from '../api';
 import { IDescriptGame, IWord, ResultGame, ISignIn } from '../interfaces';
 import { shuffle, randomInteger, randomNoRepeatNum, randomArrNum } from '../utils';
@@ -107,6 +109,9 @@ export default class Game {
     const userID = userInfo.userId;
     const token = userInfo.token;
     const allWords = await getUserWords(userID, token);
+    const stat = await getUserStatistics(userID, token);
+    const gameStat = this.type === 'sprint' ? stat.optional.sprint : stat.optional.audiocall;
+    stat.optional.date = new Date().getDate();
     const allWordsID = allWords.map((item) => item.optional.wordID);
     const result: ResultGame = [];
     answers.correct.forEach((i) => {
@@ -121,17 +126,24 @@ export default class Game {
         if (item.correct) {
           if (word.difficulty === 'new') {
             word.optional.correctAnswers += 1;
-            if (word.optional.correctAnswers === 3) word.difficulty = 'done';
+            if (word.optional.correctAnswers === 3) {
+              word.difficulty = 'done';
+              stat.learnedWords += 1;
+            }
           }
           if (word.difficulty === 'difficult') {
             word.optional.correctAnswers += 1;
-            if (word.optional.correctAnswers === 5) word.difficulty = 'done';
+            if (word.optional.correctAnswers === 5) {
+              word.difficulty = 'done';
+              stat.learnedWords += 1;
+            }
           }
         } else {
           word.optional.correctAnswers = 0;
           word.difficulty = word.difficulty === 'difficult' ? 'difficult' : 'new';
         }
-        updateUserWord(userID, item.wordID, word, token);
+        console.log(word);
+        await updateUserWord(userID, item.wordID, word, token);
       } else {
         const body = {
           difficulty: 'new',
@@ -141,8 +153,36 @@ export default class Game {
           }
         };
         createUserWord(userID, item.wordID, body, token);
+        gameStat.newWords += 1;
       }
     });
+    if (this.type === 'sprint') {
+      stat.optional.sprint = gameStat;
+      stat.optional.sprint.totalAnswers += result.length;
+      stat.optional.sprint.totalRight += answers.correct.length;
+      stat.optional.sprint.percent = Math.round(
+        (stat.optional.sprint.totalRight / stat.optional.sprint.totalAnswers) * 100
+      );
+      if (stat.optional.sprint.bestResult < this.score) {
+        stat.optional.sprint.bestResult = this.score;
+      }
+    } else {
+      stat.optional.audiocall = gameStat;
+      stat.optional.audiocall.totalAnswers += result.length;
+      stat.optional.audiocall.totalRight += answers.correct.length;
+      stat.optional.audiocall.percent = Math.round(
+        (stat.optional.audiocall.totalRight / stat.optional.audiocall.totalAnswers) * 100
+      );
+      if (stat.optional.audiocall.bestResult < this.answers.correct.length) {
+        stat.optional.audiocall.bestResult = this.answers.correct.length;
+      }
+    }
+    stat.optional.totalNewWord = stat.optional.sprint.newWords + stat.optional.audiocall.newWords;
+    stat.optional.totalPercent =
+      (stat.optional.audiocall.totalRight + stat.optional.sprint.totalRight) /
+      (stat.optional.audiocall.totalAnswers + stat.optional.sprint.totalAnswers);
+    stat.optional.totalPercent = Math.round(stat.optional.totalPercent * 100);
+    updateUserStatistics(userID, token, stat);
   }
 
   private finishGame() {
@@ -293,6 +333,7 @@ export default class Game {
       this.root.innerHTML = '';
       this.root.append(createMainscreen());
       clearInterval(this.timerID);
+      document.removeEventListener('keydown', this.checkKey);
     });
     this.updateSprint(this.correctAnswer);
     const gameMain = this.section.querySelector('.game__main');
@@ -447,6 +488,7 @@ export default class Game {
     closeBtn.addEventListener('click', () => {
       this.root.innerHTML = '';
       this.root.append(createMainscreen());
+      document.removeEventListener('keydown', this.checkKeyAudiocall);
     });
     this.updateAudiocall();
     document.addEventListener('keydown', this.checkKeyAudiocall);

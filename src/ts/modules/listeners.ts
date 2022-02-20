@@ -4,7 +4,9 @@ import { createTextbook } from './textbook';
 import { playAudio } from './textbook';
 import { addLoader } from '../utils';
 import { createAuthorisation, createProfile } from './renderPage';
-import { createUser, signIn } from '../api';
+import { createUser, getUserStatistics, signIn } from '../api';
+import { ISignIn, IUserStatistics } from '../interfaces';
+import { createStatistic } from './statistics';
 
 const addTextbookListeners = async () => {
   const main = document.querySelector('.main');
@@ -111,6 +113,7 @@ export const addHeaderListeners = async () => {
   const sprintButton = document.querySelector('.header-nav-sprint');
   const audiocallButton = document.querySelector('.header-nav-audio');
   const authorisationButton = document.querySelector('.header-nav-authorisation');
+  const statsBtn = document.querySelector('.header-nav-stats');
 
   const main = document.querySelector('.main');
 
@@ -164,5 +167,19 @@ export const addHeaderListeners = async () => {
     main.innerHTML = '';
     main.append(authorisationBlock);
     addListeners();
+  });
+
+  statsBtn?.addEventListener('click', async () => {
+    if (localStorage.getItem('login') === '+') {
+      addLoader();
+      const userInfo: ISignIn = JSON.parse(localStorage.getItem('user'));
+      const stat: IUserStatistics = await getUserStatistics(userInfo.userId, userInfo.token);
+      main.innerHTML = '';
+      main.append(createStatistic(stat));
+    } else {
+      main.innerHTML = '';
+      main.append(createAuthorisation());
+      addAuthorisationListeners();
+    }
   });
 };

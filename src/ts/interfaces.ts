@@ -41,3 +41,45 @@ export interface ISignIn {
   userId: string;
   name: string;
 }
+
+export interface IGameStatistics {
+  newWords: number;
+  percent: number;
+  bestResult: number;
+  totalAnswers: number;
+  totalRight: number;
+}
+export interface IStatistics {
+  sprint: IGameStatistics;
+  audiocall: IGameStatistics;
+  totalNewWord: number;
+  totalPercent: number;
+  date: number;
+}
+export interface IUserStatistics {
+  learnedWords: 0;
+  optional: IStatistics;
+}
+
+export const DEFAULT_STAT: IUserStatistics = {
+  learnedWords: 0,
+  optional: {
+    sprint: {
+      newWords: 0,
+      percent: 0,
+      bestResult: 0,
+      totalAnswers: 0,
+      totalRight: 0
+    },
+    audiocall: {
+      newWords: 0,
+      percent: 0,
+      bestResult: 0,
+      totalAnswers: 0,
+      totalRight: 0
+    },
+    totalNewWord: 0,
+    totalPercent: 0,
+    date: 0
+  }
+};
