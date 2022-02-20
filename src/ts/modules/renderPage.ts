@@ -1,5 +1,11 @@
 import { createMainscreen } from './mainscreen';
-import { addHeaderListeners } from './listeners';
+import { createTextbook } from './textbook';
+import { createStatistic } from './statistics';
+import { addTextbookListeners, addHeaderListeners, addAuthorisationListeners, addProfileListeners } from './listeners';
+import { addLoader } from '../utils';
+import { ISignIn, IUserStatistics } from '../interfaces';
+import { getUserStatistics } from '../api';
+import Game from '../games/gameClass';
 
 const createHeader = () => {
   const headerBlock = document.createElement('header');
@@ -67,6 +73,7 @@ const createAuthorisationModal = (authorisationState: string) => {
 };
 
 export const createAuthorisation = () => {
+  sessionStorage.setItem('saved-page', 'authorisation');
   let authorisationState = sessionStorage.getItem('authorisation-state');
   if (authorisationState === null) {
     authorisationState = 'registration';
@@ -96,6 +103,7 @@ export const createAuthorisation = () => {
 };
 
 export const createProfile = () => {
+  sessionStorage.setItem('saved-page', 'profile');
   const profileBlock = document.createElement('div');
   profileBlock.classList.add('profile');
   const user = JSON.parse(localStorage.getItem('user'));
@@ -117,17 +125,71 @@ export const createProfile = () => {
 };
 
 export const renderPage = async () => {
+  const pageState = sessionStorage.getItem('saved-page');
   const container = document.querySelector('.container');
   const main = document.querySelector('.main');
 
   const headerBlock = createHeader();
   const footerBlock = createFooter();
-  const mainscreenBlock = createMainscreen();
-  // const textbookBlock = await createTextbook(0, 0);
 
   container.prepend(headerBlock);
   container.append(footerBlock);
-  main.append(mainscreenBlock);
+
+  if (pageState === 'mainscreen') {
+    const mainscreenBlock = createMainscreen();
+    main.append(mainscreenBlock);
+  }
+
+  if (pageState === 'textbook') {
+    addLoader();
+    const group = Number(sessionStorage.getItem('rs-group'));
+    const page = Number(sessionStorage.getItem('rs-page'));
+    const textbookBlock = await createTextbook(group, page);
+    main.innerHTML = '';
+    main.append(textbookBlock);
+    await addTextbookListeners();
+  }
+
+  if (pageState === 'authorisation') {
+    main.append(createAuthorisation());
+    addAuthorisationListeners();
+  }
+
+  if (pageState === 'profile') {
+    main.append(createProfile());
+    addProfileListeners();
+  }
+
+  if (pageState === 'statistics') {
+    if (localStorage.getItem('login') === '+') {
+      addLoader();
+      const userInfo: ISignIn = JSON.parse(localStorage.getItem('user'));
+      const stat: IUserStatistics = await getUserStatistics(userInfo.userId, userInfo.token);
+      main.innerHTML = '';
+      main.append(createStatistic(stat));
+    } else {
+      main.append(createAuthorisation());
+      addAuthorisationListeners();
+    }
+  }
+
+  if (pageState === 'audiocall') {
+    Game.inst = new Game('audiocall');
+    if (Game.textbook) {
+      Game.inst.render(Game.arrWords);
+    } else {
+      Game.inst.startPage();
+    }
+  }
+
+  if (pageState === 'sprint') {
+    Game.inst = new Game('sprint');
+    if (Game.textbook) {
+      Game.inst.render(Game.arrWords);
+    } else {
+      Game.inst.startPage();
+    }
+  }
 
   addHeaderListeners();
 };

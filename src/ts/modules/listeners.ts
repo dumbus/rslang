@@ -8,7 +8,7 @@ import { createUser, getUserStatistics, signIn } from '../api';
 import { ISignIn, IUserStatistics } from '../interfaces';
 import { createStatistic } from './statistics';
 
-const addTextbookListeners = async () => {
+export const addTextbookListeners = async () => {
   const isAuthorized = Boolean(localStorage.getItem('login'));
   const main = document.querySelector('.main');
   const textbookAudioBtns = document.querySelectorAll('.textbook-word-content-audiobtn');
@@ -171,13 +171,16 @@ export const addHeaderListeners = async () => {
     main.querySelector('div').classList.add('hidden');
     addLoader();
 
-    const textbookContent = await createTextbook();
+    const group = Number(sessionStorage.getItem('rs-group'));
+    const page = Number(sessionStorage.getItem('rs-page'));
+    const textbookBlock = await createTextbook(group, page);
     main.innerHTML = '';
-    main.append(textbookContent);
+    main.append(textbookBlock);
     addTextbookListeners();
   });
 
   sprintButton.addEventListener('click', () => {
+    sessionStorage.setItem('saved-page', 'sprint');
     Game.inst = new Game('sprint');
     if (Game.textbook) {
       Game.inst.render(Game.arrWords);
@@ -187,6 +190,7 @@ export const addHeaderListeners = async () => {
   });
 
   audiocallButton.addEventListener('click', () => {
+    sessionStorage.setItem('saved-page', 'audiocall');
     Game.inst = new Game('audiocall');
     if (Game.textbook) {
       Game.inst.render(Game.arrWords);
@@ -196,6 +200,7 @@ export const addHeaderListeners = async () => {
   });
 
   authorisationButton.addEventListener('click', () => {
+    sessionStorage.setItem('saved-page', 'authorisation');
     const isAutorised = Boolean(localStorage.getItem('login'));
     let authorisationBlock: Element;
     // eslint-disable-next-line @typescript-eslint/ban-types

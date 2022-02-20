@@ -2,6 +2,7 @@ import { IUserStatistics } from '../interfaces';
 import { createMainscreen } from './mainscreen';
 
 export const createStatistic = (stat: IUserStatistics) => {
+  sessionStorage.setItem('saved-page', 'statistics');
   const statisticsModal = document.createElement('div');
   statisticsModal.className = 'statistics';
   statisticsModal.innerHTML = `

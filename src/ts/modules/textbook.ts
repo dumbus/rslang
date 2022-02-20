@@ -191,6 +191,9 @@ const createWords = async (group: number, page: number) => {
   } else {
     const response = await getWords(group, page);
 
+    Game.arrWords = response;
+    Game.textbook = true;
+
     response.forEach((word) => {
       wordsBlock.append(createWord(word));
     });
@@ -199,6 +202,7 @@ const createWords = async (group: number, page: number) => {
 };
 
 export const createTextbook = async (group = 0, page = 0) => {
+  sessionStorage.setItem('saved-page', 'textbook');
   const isAuthorized = Boolean(localStorage.getItem('login'));
   sessionStorage.setItem('rs-group', String(group));
   sessionStorage.setItem('rs-page', String(page));
