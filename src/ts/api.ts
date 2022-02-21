@@ -11,6 +11,12 @@ export async function getWords(group = 0, page = 0) {
   return arr;
 }
 
+export async function getWord(id: string) {
+  const res = await fetch(`${WORDS}/${id}`);
+  const word: IWord = await res.json();
+  return word;
+}
+
 export async function getWordsAllGroup(group = '0') {
   const arr = [];
   for (let i = 0; i < 30; i += 1) {

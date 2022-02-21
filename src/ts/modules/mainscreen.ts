@@ -1,6 +1,7 @@
 import Game from '../games/gameClass';
 
 export const createMainscreen = () => {
+  sessionStorage.setItem('saved-page', 'mainscreen');
   Game.textbook = false;
   const mainscreenBlock = document.createElement('div');
   mainscreenBlock.classList.add('mainscreen');
