@@ -1,0 +1,37 @@
+{
+  "plugins": ["prettier", "import", "@typescript-eslint"],
+  "extends": [
+    "plugin:prettier/recommended",
+    "prettier",
+    "airbnb-typescript/base",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "es2021": true,
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "no-debugger": "off",
+    "@typescript-eslint/no-explicit-any": 2,
+    "@typescript-eslint/lines-between-class-members": "off",
+    "@typescript-eslint/comma-dangle": "off",
+    // "@typescript-eslint/no-loop-func": "off",
+    "prettier/prettier": ["error", {
+      "trailingComma": "none",
+      "semi": true,
+      "singleQuote": true,
+      "endOfLine": "auto",
+      "tabWidth" : 2
+      }
+    ]
+  },
+  "ignorePatterns": "webpack.config.js"
+}

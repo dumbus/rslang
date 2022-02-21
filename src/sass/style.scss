@@ -1,0 +1,154 @@
+@import "./variables.scss";
+
+
+*, 
+*::after, 
+*::before {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html {
+  overflow-x: hidden;
+  margin-right: calc(-1 * (100vw - 100%));
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 1440px;
+  position: relative;
+  margin: 0 auto;
+}
+.main {
+  position: relative;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  padding: 5px 10px;
+  background-color: $blue;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  &:hover {
+    filter: grayscale(50%);
+    cursor: pointer;
+  }
+  &-1 {
+    background-color: $group-1-light;
+  }
+  &-2 {
+    background-color: $group-2-light;
+  }
+  &-3 {
+    background-color: $group-3-light;
+  }
+  &-4 {
+    background-color: $group-4-light;
+  }
+  &-5 {
+    background-color: $group-5-light;
+  }
+  &-6 {
+    background-color: $group-6-light;
+  }
+}
+
+.title {
+  padding: 5px 10px;
+  background-color: $green;
+  border-radius: 5px;
+  font-size: 28px;
+  text-align: center;
+  &-1 {
+    background-color: $group-1;
+  }
+  &-2 {
+    background-color: $group-2;
+  }
+  &-3 {
+    background-color: $group-3;
+  }
+  &-4 {
+    background-color: $group-4;
+  }
+  &-5 {
+    background-color: $group-5;
+  }
+  &-6 {
+    background-color: $group-6;
+  }
+}
+
+.subtitle {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 5px 10px;
+  background-color: $light-green;
+  border-radius: 5px;
+  font-size: 24px;
+  &-1 {
+    background-color: $group-1-light;
+  }
+  &-2 {
+    background-color: $group-2-light;
+  }
+  &-3 {
+    background-color: $group-3-light;
+  }
+  &-4 {
+    background-color: $group-4-light;
+  }
+  &-5 {
+    background-color: $group-5-light;
+  }
+  &-6 {
+    background-color: $group-6-light;
+  }
+}
+
+.overlay-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 60px);
+  background-color: #FFF;
+}
+
+.label {
+  padding: 0 5px;
+  border-radius: 3px;
+  border: 1px solid $silver;
+  text-align: center;
+  &-difficult {
+    background-color: $wrong-red;
+  }
+  &-learned {
+    background-color: $correct-green;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+@import "./modules/header.scss";
+@import "./modules/mainscreen.scss";
+@import "./modules/game.scss";
+@import "./modules/textbook.scss";
+@import "./modules/authorisation.scss";
+@import "./modules/profile.scss";
+@import "./modules/footer.scss";
+@import "./modules/loader.scss";
+@import "./modules/media.scss";
+@import "./modules/statistics.scss";

@@ -1,0 +1,59 @@
+.mainscreen {
+  padding: 100px 0 100px 0;
+  &-text {
+    &-subtitle {
+      margin: 20px 0 0 0;
+    }
+    &-reasons {
+      margin-top: 10px;
+      font-size: 20px;
+      list-style-type: none;
+      &-item {
+        margin-top: 5px;
+      }
+    }
+    &-advantages {
+      margin-top: 10px;
+      font-size: 20px;
+      list-style-type: none;
+      &-item {
+        margin-top: 5px;
+      }
+    }
+    &-team {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      &-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 10px;
+        width: 45%;
+        padding: 10px;
+        border: 2px solid $silver;
+        border-radius: 15px;
+        &-img {
+          width: 150px;
+          height: 150px;
+          border: 2px solid $silver;
+          border-radius: 100%;
+        }
+        &-link {
+          color: $dark-grey;
+          text-decoration: none;
+          &:hover {
+            color: #000;
+          }
+        }
+        &-role {
+          padding: 0 5px;
+          background-color: $blue;
+          color: $dark-blue;
+          text-transform: capitalize;
+          border-radius: 3px;
+        }
+      } 
+    }
+  }
+}
