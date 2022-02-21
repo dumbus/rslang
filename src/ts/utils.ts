@@ -96,6 +96,7 @@ export const makeWordDifficult = async (currentWordId: string, difficulty: strin
     await createUserWord(userId, currentWordId, body, token);
     currentWordBlock.classList.remove('textbook-word-correct');
     currentWordBlock.classList.add('textbook-word-incorrect');
+    currentWordBlock.setAttribute('data-difficulty', 'difficult');
   }
 
   const currentWordLabels = currentWordBlock.querySelector('.textbook-word-content-labels');
@@ -131,6 +132,7 @@ export const makeWordLearned = async (currentWordId: string, difficulty: string)
   const currentWordLabels = currentWordBlock.querySelector('.textbook-word-content-labels');
   currentWordLabels.innerHTML = '';
   currentWordLabels.append(createDifficultyLabel('done'));
+  currentWordBlock.setAttribute('data-difficulty', 'done');
 };
 
 export const makeWordNew = async (currentWordId: string) => {
@@ -157,7 +159,9 @@ export const disableButtonsForLearnedPages = () => {
 
     if (sumOfLearnedWords === 20) {
       const pageSubtitle = document.querySelector('.textbook-subtitle');
-      pageSubtitle.textContent += ' - Изучена полностью!';
+      if (pageSubtitle.textContent[pageSubtitle.textContent.length - 1] !== '!') {
+        pageSubtitle.textContent += ' - Изучена полностью!';
+      }
       audioBtn.disabled = true;
       sprintBtn.disabled = true;
     } else {

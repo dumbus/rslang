@@ -32,6 +32,7 @@ export const addTextbookListeners = async () => {
       main.innerHTML = '';
       main.append(textbookContent);
       addTextbookListeners();
+      disableButtonsForLearnedPages();
     });
   });
 
@@ -45,6 +46,7 @@ export const addTextbookListeners = async () => {
     main.innerHTML = '';
     main.append(textbookContent);
     addTextbookListeners();
+    disableButtonsForLearnedPages();
   });
 
   nextPageBtn.addEventListener('click', async () => {
@@ -58,6 +60,7 @@ export const addTextbookListeners = async () => {
     main.innerHTML = '';
     main.append(textbookContent);
     addTextbookListeners();
+    disableButtonsForLearnedPages();
   });
 
   if (isAuthorized) {
@@ -100,8 +103,6 @@ export const addTextbookListeners = async () => {
       });
     });
   }
-
-  disableButtonsForLearnedPages();
 };
 
 export const addAuthorisationListeners = () => {
@@ -166,6 +167,7 @@ export const addHeaderListeners = async () => {
     Game.textbook = false;
     main.innerHTML = '';
     main.append(createMainscreen());
+    disableButtonsForLearnedPages();
   });
 
   textbookButton.addEventListener('click', async () => {
@@ -178,6 +180,7 @@ export const addHeaderListeners = async () => {
     main.innerHTML = '';
     main.append(textbookBlock);
     addTextbookListeners();
+    disableButtonsForLearnedPages();
   });
 
   sprintButton.addEventListener('click', () => {
@@ -219,6 +222,7 @@ export const addHeaderListeners = async () => {
     main.innerHTML = '';
     main.append(authorisationBlock);
     addListeners();
+    disableButtonsForLearnedPages();
   });
 
   statsBtn?.addEventListener('click', async () => {
@@ -234,5 +238,6 @@ export const addHeaderListeners = async () => {
       main.append(createAuthorisation());
       addAuthorisationListeners();
     }
+    disableButtonsForLearnedPages();
   });
 };
