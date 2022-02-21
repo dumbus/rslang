@@ -2,7 +2,7 @@ import { createMainscreen } from './mainscreen';
 import { createTextbook } from './textbook';
 import { createStatistic } from './statistics';
 import { addTextbookListeners, addHeaderListeners, addAuthorisationListeners, addProfileListeners } from './listeners';
-import { addLoader } from '../utils';
+import { addLoader, disableButtonsForLearnedPages } from '../utils';
 import { ISignIn, IUserStatistics } from '../interfaces';
 import { getUserStatistics } from '../api';
 import Game from '../games/gameClass';
@@ -196,4 +196,5 @@ export const renderPage = async () => {
   }
 
   addHeaderListeners();
+  disableButtonsForLearnedPages();
 };
