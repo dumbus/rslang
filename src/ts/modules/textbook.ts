@@ -1,7 +1,7 @@
 import { IWord, IWordStatistics } from '../interfaces';
 import { getWords, getUserWords, getWord } from '../api';
 import Game from '../games/gameClass';
-import { createDifficultyLabel } from '../utils';
+import { addWordsForGame, createDifficultyLabel } from '../utils';
 
 const base = 'https://rs-lang-bckend.herokuapp.com';
 
@@ -157,11 +157,14 @@ const createWords = async (group: number, page: number) => {
         wordsBlock.append(noneWordsBlock);
       }
 
+      const arrDiffWords: IWord[] = [];
       for (const difficultWordData of difficultWords) {
         const wordData = await getWord(difficultWordData.optional.wordID);
+        arrDiffWords.push(wordData);
         const wordBlock = createWord(wordData, 'difficult', difficultWordData.optional.correctAnswers);
         wordsBlock.append(wordBlock);
       }
+      Game.arrWords = arrDiffWords;
     } else {
       const usualResponse = await getWords(group, page);
       const userResponse = await getUserWords(userId, token);
@@ -172,8 +175,7 @@ const createWords = async (group: number, page: number) => {
         userWordsAnswers.push(userWordData.optional.correctAnswers);
       });
 
-      Game.arrWords = usualResponse;
-      Game.textbook = true;
+      const arrDiffWords: IWord[] = [];
 
       usualResponse.forEach((word: IWord) => {
         let wordBlock: HTMLDivElement;
@@ -181,23 +183,26 @@ const createWords = async (group: number, page: number) => {
 
         if (index !== -1) {
           wordBlock = createWord(word, userWordsDifficulties[index], userWordsAnswers[index]);
+          if (userWordsDifficulties[index] !== 'done') arrDiffWords.push(word);
         } else {
           wordBlock = createWord(word);
+          arrDiffWords.push(word);
         }
 
         wordsBlock.append(wordBlock);
       });
+      Game.arrWords = await addWordsForGame(group, page, arrDiffWords, userResponse);
     }
   } else {
     const response = await getWords(group, page);
 
     Game.arrWords = response;
-    Game.textbook = true;
 
     response.forEach((word) => {
       wordsBlock.append(createWord(word));
     });
   }
+  Game.textbook = true;
   return wordsBlock;
 };
 

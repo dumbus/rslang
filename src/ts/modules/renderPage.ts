@@ -125,7 +125,11 @@ export const createProfile = () => {
 };
 
 export const renderPage = async () => {
-  const pageState = sessionStorage.getItem('saved-page');
+  let pageState = sessionStorage.getItem('saved-page');
+  if (pageState === null) {
+    sessionStorage.setItem('saved-page', 'mainscreen');
+    pageState = 'mainscreen';
+  }
   const container = document.querySelector('.container');
   const main = document.querySelector('.main');
 

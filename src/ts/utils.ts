@@ -1,5 +1,5 @@
-import { getUserWordById, updateUserWord, createUserWord } from './api';
-import { IWordStatistics } from './interfaces';
+import { getUserWordById, updateUserWord, createUserWord, getWords } from './api';
+import { IWord, IWordStatistics } from './interfaces';
 
 export function shuffle(array: unknown[]) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -168,4 +168,36 @@ export const disableButtonsForLearnedPages = () => {
     audioBtn.disabled = false;
     sprintBtn.disabled = false;
   }
+};
+
+export const addWordsForGame = async (group: number, page: number, arr: IWord[], userResponse: IWordStatistics[]) => {
+  let words = arr;
+  let newGroup: number;
+  let newPage: number;
+  if (arr.length < 20 && !(group === 5 && page === 29)) {
+    if (page === 29) {
+      newGroup = group + 1;
+      newPage = 0;
+    } else {
+      newGroup = group;
+      newPage = page + 1;
+    }
+    const usualResponse = await getWords(newGroup, newPage);
+    const userWordsIds: string[] = [];
+    const userWordsDifficulties: string[] = [];
+    userResponse.forEach((userWordData) => {
+      userWordsIds.push(userWordData.optional.wordID);
+      userWordsDifficulties.push(userWordData.difficulty);
+    });
+    usualResponse.forEach((word: IWord) => {
+      const index = userWordsIds.indexOf(word.id);
+      if (index !== -1) {
+        if (userWordsDifficulties[index] !== 'done') words.push(word);
+      } else {
+        words.push(word);
+      }
+    });
+    if (words.length < 20) words = await addWordsForGame(newGroup, newPage, words, userResponse);
+  }
+  return words;
 };

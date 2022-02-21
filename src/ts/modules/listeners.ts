@@ -163,6 +163,7 @@ export const addHeaderListeners = async () => {
   const main = document.querySelector('.main');
 
   mainscreenButton.addEventListener('click', () => {
+    Game.textbook = false;
     main.innerHTML = '';
     main.append(createMainscreen());
   });
@@ -200,6 +201,7 @@ export const addHeaderListeners = async () => {
   });
 
   authorisationButton.addEventListener('click', () => {
+    Game.textbook = false;
     sessionStorage.setItem('saved-page', 'authorisation');
     const isAutorised = Boolean(localStorage.getItem('login'));
     let authorisationBlock: Element;
@@ -220,6 +222,7 @@ export const addHeaderListeners = async () => {
   });
 
   statsBtn?.addEventListener('click', async () => {
+    Game.textbook = false;
     if (localStorage.getItem('login') === '+') {
       addLoader();
       const userInfo: ISignIn = JSON.parse(localStorage.getItem('user'));
