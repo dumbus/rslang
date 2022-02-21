@@ -10,8 +10,10 @@ import {
   updateUserStatistics
 } from '../api';
 import { IDescriptGame, IWord, ResultGame, ISignIn } from '../interfaces';
-import { shuffle, randomInteger, randomNoRepeatNum, randomArrNum } from '../utils';
+import { shuffle, randomInteger, randomNoRepeatNum, randomArrNum, addLoader } from '../utils';
 import { createMainscreen } from '../modules/mainscreen';
+import { createTextbook } from '../modules/textbook';
+import { addTextbookListeners } from '../modules/listeners';
 
 const SPRINT_DESCRIPTION = {
   title: 'Спринт',
@@ -313,6 +315,7 @@ export default class Game {
 
   private renderSprint(arr: IWord[]) {
     this.words = arr;
+    shuffle(this.words);
     this.section = document.createElement('section');
     this.section.className = 'game';
     this.section.innerHTML = `
@@ -329,9 +332,20 @@ export default class Game {
     </div>`;
     this.section.querySelector('.mute-game').addEventListener('click', this.toggleMute.bind(this));
     const closeBtn = this.section.querySelector('.close-game');
-    closeBtn.addEventListener('click', () => {
-      this.root.innerHTML = '';
-      this.root.append(createMainscreen());
+    closeBtn.addEventListener('click', async () => {
+      if (Game.textbook) {
+        this.root.querySelector('div').classList.add('hidden');
+        addLoader();
+        const group = Number(sessionStorage.getItem('rs-group'));
+        const page = Number(sessionStorage.getItem('rs-page'));
+        const textbookBlock = await createTextbook(group, page);
+        this.root.innerHTML = '';
+        this.root.append(textbookBlock);
+        addTextbookListeners();
+      } else {
+        this.root.innerHTML = '';
+        this.root.append(createMainscreen());
+      }
       clearInterval(this.timerID);
       document.removeEventListener('keydown', this.checkKey);
     });
@@ -472,6 +486,7 @@ export default class Game {
 
   private renderAudiocall(arr: IWord[]) {
     this.words = arr;
+    shuffle(this.words);
     this.section = document.createElement('section');
     this.section.className = 'game';
     this.section.innerHTML = `
@@ -485,9 +500,20 @@ export default class Game {
     </div>`;
     this.section.querySelector('.mute-game').addEventListener('click', this.toggleMute.bind(this));
     const closeBtn = this.section.querySelector('.close-game');
-    closeBtn.addEventListener('click', () => {
-      this.root.innerHTML = '';
-      this.root.append(createMainscreen());
+    closeBtn.addEventListener('click', async () => {
+      if (Game.textbook) {
+        this.root.querySelector('div').classList.add('hidden');
+        addLoader();
+        const group = Number(sessionStorage.getItem('rs-group'));
+        const page = Number(sessionStorage.getItem('rs-page'));
+        const textbookBlock = await createTextbook(group, page);
+        this.root.innerHTML = '';
+        this.root.append(textbookBlock);
+        addTextbookListeners();
+      } else {
+        this.root.innerHTML = '';
+        this.root.append(createMainscreen());
+      }
       document.removeEventListener('keydown', this.checkKeyAudiocall);
     });
     this.updateAudiocall();

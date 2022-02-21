@@ -40,6 +40,25 @@ const logout = () => {
   addAuthorisationListeners();
 };
 
+const newToken = async () => {
+  const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+  const res = await fetch(`${BASE}users/${user.userId}/tokens`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${user.refreshToken}`
+    }
+  });
+  if (res.status === 403) {
+    logout();
+    throw new Error('Access token is missing, expired or invalid');
+  }
+  const result: ISignIn = await res.json();
+  localStorage.setItem('user', JSON.stringify(result));
+  localStorage.setItem('login', '+');
+  return true;
+};
+
 export const getUserWords = async (id: string, token: string) => {
   const res = await fetch(`${BASE}users/${id}/words`, {
     method: 'GET',
@@ -47,11 +66,17 @@ export const getUserWords = async (id: string, token: string) => {
       Authorization: `Bearer ${token}`
     }
   });
+  let arr: IWordStatistics[];
   if (res.status === 401) {
-    logout();
-    throw new Error('Sign In');
+    if (await newToken()) {
+      const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+      arr = await getUserWords(id, user.token);
+    } else {
+      throw new Error('Sign In');
+    }
+  } else {
+    arr = await res.json();
   }
-  const arr: IWordStatistics[] = await res.json();
   return arr;
 };
 
@@ -62,11 +87,15 @@ export const getUserWordById = async (id: string, wordID: string, token: string)
       Authorization: `Bearer ${token}`
     }
   });
+  let resu = await res.json();
   if (res.status === 401) {
-    logout();
-    throw new Error('Sign In');
+    if (await newToken()) {
+      const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+      resu = await getUserWordById(id, wordID, user.token);
+    } else {
+      throw new Error('Sign In');
+    }
   }
-  const resu = await res.json();
   delete resu.id;
   delete resu.wordId;
   const result: IWordStatistics = resu;
@@ -83,8 +112,12 @@ export const createUserWord = async (id: string, wordID: string, body: IWordStat
     }
   });
   if (res.status === 401) {
-    logout();
-    throw new Error('Sign In');
+    if (await newToken()) {
+      const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+      createUserWord(id, wordID, body, user.token);
+    } else {
+      throw new Error('Sign In');
+    }
   }
 };
 
@@ -98,8 +131,12 @@ export const updateUserWord = async (id: string, wordID: string, body: IWordStat
     }
   });
   if (res.status === 401) {
-    logout();
-    throw new Error('Sign In');
+    if (await newToken()) {
+      const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+      updateUserWord(id, wordID, body, user.token);
+    } else {
+      throw new Error('Sign In');
+    }
   }
 };
 
@@ -170,12 +207,15 @@ export const getUserStatistics = async (id: string, token: string) => {
       Authorization: `Bearer ${token}`
     }
   });
-  if (res.status === 401) {
-    logout();
-    throw new Error('Sign In');
-  }
   let stat: IUserStatistics;
-  if (res.status === 404) {
+  if (res.status === 401) {
+    if (await newToken()) {
+      const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+      stat = await getUserStatistics(id, user.token);
+    } else {
+      throw new Error('Sign In');
+    }
+  } else if (res.status === 404) {
     stat = DEFAULT_STAT;
   } else {
     const result = await res.json();
@@ -198,7 +238,11 @@ export const updateUserStatistics = async (id: string, token: string, body: IUse
     body: JSON.stringify(body)
   });
   if (res.status === 401) {
-    logout();
-    throw new Error('Sign In');
+    if (await newToken()) {
+      const user: ISignIn = JSON.parse(localStorage.getItem('user'));
+      updateUserStatistics(id, user.token, body);
+    } else {
+      throw new Error('Sign In');
+    }
   }
 };
