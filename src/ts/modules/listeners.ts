@@ -125,11 +125,11 @@ export const addAuthorisationListeners = () => {
     addAuthorisationListeners();
   });
 
-  const authorisationButton = document.querySelector('.authorisation-modal-form-submit');
+  const form = document.querySelector('.authorisation-modal-form');
   const inputName: HTMLInputElement = document.querySelector('.authorisation-modal-form-name');
   const inputEmail: HTMLInputElement = document.querySelector('.authorisation-modal-form-email');
   const inputPassword: HTMLInputElement = document.querySelector('.authorisation-modal-form-password');
-  authorisationButton.addEventListener('click', async (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = inputEmail.value;
     const password = inputPassword.value;

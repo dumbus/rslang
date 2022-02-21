@@ -180,12 +180,12 @@ export const signIn = async (email: string, password: string) => {
       'Content-Type': 'application/json'
     }
   });
-  if (res.status === 403) {
+  if (res.status === 403 || res.status === 422) {
     addWrongMessage('Не корректный e-mail или пароль');
     throw new Error('Incorrect e-mail or password');
   }
   if (res.status === 404) {
-    addWrongMessage('Пользователь не найден');
+    addWrongMessage('Не верный логин или пароль');
     throw new Error('Not found');
   }
   const result: ISignIn = await res.json();
