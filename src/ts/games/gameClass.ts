@@ -122,7 +122,7 @@ export default class Game {
     answers.wrong.forEach((i) => {
       result.push({ wordID: this.words[i].id, correct: false });
     });
-    result.forEach(async (item) => {
+    for (const item of result) {
       if (allWordsID.includes(item.wordID)) {
         const word = await getUserWordById(userID, item.wordID, token);
         if (item.correct) {
@@ -157,7 +157,7 @@ export default class Game {
         createUserWord(userID, item.wordID, body, token);
         gameStat.newWords += 1;
       }
-    });
+    }
     if (this.type === 'sprint') {
       stat.optional.sprint = gameStat;
       stat.optional.sprint.totalAnswers += result.length;
@@ -226,13 +226,23 @@ export default class Game {
       Game.inst.render(this.words);
     });
     const closeBtn = element.querySelector('.result__btn_close');
-    closeBtn.addEventListener('click', () => {
-      this.root.innerHTML = '';
-      this.root.append(createMainscreen());
+    closeBtn.addEventListener('click', async () => {
+      if (Game.textbook) {
+        this.root.querySelector('div').classList.add('hidden');
+        addLoader();
+        const group = Number(sessionStorage.getItem('rs-group'));
+        const page = Number(sessionStorage.getItem('rs-page'));
+        const textbookBlock = await createTextbook(group, page);
+        this.root.innerHTML = '';
+        this.root.append(textbookBlock);
+        addTextbookListeners();
+      } else {
+        this.root.innerHTML = '';
+        this.root.append(createMainscreen());
+      }
     });
     this.section.append(element);
-    const isAutorised = Boolean(localStorage.getItem('login'));
-    if (isAutorised) this.pushResult(this.answers);
+    if (localStorage.getItem('login') === '+') this.pushResult(this.answers);
   }
 
   private toggleMute() {

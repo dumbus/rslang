@@ -57,7 +57,7 @@ export interface IStatistics {
   date: number;
 }
 export interface IUserStatistics {
-  learnedWords: 0;
+  learnedWords: number;
   optional: IStatistics;
 }
 
