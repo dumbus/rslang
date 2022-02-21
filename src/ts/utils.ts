@@ -197,7 +197,7 @@ export const addWordsForGame = async (group: number, page: number, arr: IWord[],
         words.push(word);
       }
     });
+    if (words.length < 20) words = await addWordsForGame(newGroup, newPage, words, userResponse);
   }
-  if (words.length < 20) words = await addWordsForGame(newGroup, newPage, words, userResponse);
   return words;
 };
